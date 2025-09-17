@@ -22,14 +22,12 @@ class NegativeDestination(Thing):
 
 
 class GridWorldEnvironment(Environment):
-    # This environment has a grid of rows and columns with obstacles randomly dispersed
-    # 
+    ''' This environment has a grid of rows and columns with obstacles '''
 
     def __init__(self, width=4, height=3):
         super().__init__()
         self.width = width
         self.height = height
-
 
     def get_agent_percepts(self, agent, env):
         """
@@ -47,7 +45,7 @@ class GridWorldEnvironment(Environment):
         # Get positions of all obstacles in the environment
         obstacle_positions = [(thing.location[0], thing.location[1]) 
                             for thing in env.things 
-                            if isinstance(thing, Obstacle) and hasattr(thing, 'location')]
+                            if isinstance(thing, Obstacle)]
         
         return self.get_available_moves(x, y, env.width, env.height, obstacle_positions)
 
@@ -55,9 +53,6 @@ class GridWorldEnvironment(Environment):
 
     def percept(self, agent):
         """Override the percept method to include available moves"""
-        # Get standard percepts from parent class
-        standard_percepts = super().percept(agent)
-        
         # Add available moves to percepts
         x, y = agent.location
         obstacle_positions = [(thing.location[0], thing.location[1]) 
@@ -67,22 +62,14 @@ class GridWorldEnvironment(Environment):
         available_moves = self.get_available_moves(x, y, self.width, self.height, obstacle_positions)
         
         # Return both standard percepts and available moves
-        return (standard_percepts, available_moves)
+        return (available_moves)
 
 
     def get_available_moves(self, x, y, width, height, obstacles=None):
         """
         Returns a list of available directions (north, south, east, west) that an agent can move
-        based on its current position and grid boundaries.
-        
-        Parameters:
-        - x, y: Current coordinates of the agent
-        - width, height: Dimensions of the grid
-        - obstacles: Optional list of (x,y) tuples representing obstacle positions
-        
-        Returns:
-        - List of available directions as strings ('north', 'south', 'east', 'west')
-        """
+        based on its current position and grid boundaries. """
+
         if obstacles is None:
             obstacles = []
             
@@ -109,38 +96,81 @@ class GridWorldEnvironment(Environment):
 
 
     def execute_action(self, agent, action):
-        # First execute the standard action
-        super().execute_action(agent, action)
-        
+        print(f"Executing action {action}")
+        print(f"Before action Location is {agent.location}")
+
+        # Calculate obstacle positions 
+        obstacle_positions = [(thing.location[0], thing.location[1])
+                            for thing in self.things 
+                            if isinstance(thing, Obstacle)]
+        if action not in self.get_available_moves(agent.location[0],
+                                              agent.location[1],
+                                              self.width,
+                                              self.height,
+                                              obstacle_positions):
+            print("❌ Cant go that direction!")
+            return
+
+        if action == 'north':
+            agent.location = (agent.location[0], agent.location[1] - 1)  # Move up (decrease y)
+        elif action == 'south':
+            agent.location =  (agent.location[0], agent.location[1] + 1)  # Move down (increase y)
+        elif action == 'east':
+            agent.location =  (agent.location[0] + 1, agent.location[1])  # Move right (increase x)
+        elif action == 'west':
+            agent.location =  (agent.location[0] - 1, agent.location[1])  # Move left (decrease x)
+        else:
+            agent.location =  (agent.location[0], agent.location[1]) 
+
+        print(f"After action Location is {agent.location}")
+
         # Check if agent is at a positive destination
         positive_destinations = self.list_things_at(agent.location, PositiveDestination)
         if positive_destinations:
             agent.performance += 1
-            print(f"Agent reached positive destination! Score +1. Total: {agent.performance}")
+            print(f"🎉 Agent reached positive destination! Score +1. Total: {agent.performance}")
             
         # Check if agent is at a negative destination
         negative_destinations = self.list_things_at(agent.location, NegativeDestination)
         if negative_destinations:
             agent.performance -= 1
-            print(f"Agent reached negative destination! Score -1. Total: {agent.performance}")
+            print(f"😭 Agent reached negative destination! Score -1. Total: {agent.performance}")
 
 
-def simple_agent_program(percept):
+def random_agent_program(percept):
     """A simple agent program that moves randomly"""
-    return random.choice(['Forward', 'TurnRight', 'TurnLeft'])
+    return random.choice(['south', 'east', 'north', 'west'])
 
 # Create and set up the environment
-def create_custom_environment():
-    # Create environment with width 4 and height 3
-    env = GridWorldEnvironment(4, 3)
-    
-    env.add_thing(Obstacle(), (2, 3))
-    env.add_thing(PositiveDestination(), (4, 1))
-    env.add_thing(NegativeDestination(), (3, 1))
+def create_gridworld_environment(width, height):
+    env = GridWorldEnvironment(width, height)
+
+    # Generate some random locations for the obstacle, the positive block and the negative block
+    obstacle_x = random.randint(0, width-1)
+    obstacle_y = random.randint(0, height-1)
+
+    while True:
+        pos_x = random.randint(0, width -1)
+        pos_y = random.randint(0, height - 1)
+        if (pos_x, pos_y) != (obstacle_x, obstacle_y):
+            break
+
+    while True:
+        neg_x = random.randint(0, width -1)
+        neg_y = random.randint(0, height - 1)
+        if (neg_x, neg_y) != (obstacle_x, obstacle_y) and (neg_x, neg_y) != (pos_x, pos_y):
+            break
+
+    print(f"Obstacle location is {obstacle_x}, {obstacle_y}")
+    print(f"Positive location is {pos_x}, {pos_y}")
+    print(f"Negative location is {neg_x}, {neg_y}")
+
+    env.add_thing(Obstacle(), (obstacle_x, obstacle_y))
+    env.add_thing(PositiveDestination(), (pos_x, pos_y))
+    env.add_thing(NegativeDestination(), (neg_x, neg_y))
     
     # Create and add an agent with a direction
-    agent = Agent(simple_agent_program)
-    agent.direction = Direction("right")  # Give the agent a direction
+    agent = Agent(random_agent_program)
     env.add_thing(agent, (0, 0))
     
     return env
@@ -148,8 +178,10 @@ def create_custom_environment():
 
 def main():
 
-    env = create_custom_environment()
+    # Generate
+    env = create_gridworld_environment(4, 3)
     env.run(20)
+    print(f"********** FINAL SCORE {env.agents[0].performance} ********")
 
 if __name__ == "__main__":
     main()
