@@ -44,6 +44,7 @@ import sys
 import os
 import random
 import argparse
+import time
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description='Grid World Environment Simulation')
@@ -321,8 +322,11 @@ def building_your_world(steps, runs):
             if args.verbose:
                 print(f"Starting position is {random_position}")
             
-            # Run the simulation
+            # Run the simulation and measure time
+            start_time = time.time()
             env.run(steps)
+            end_time = time.time()
+            elapsed_time = end_time - start_time
             
             # Update statistics
             total_performance += env.agents[0].performance
@@ -330,7 +334,7 @@ def building_your_world(steps, runs):
                 wins += 1
                 
             # Print results for this run
-            print(f"AGENT: {agent_program.__name__:20} RUN:{run}/{runs} STEPS:{steps} RESULT:{'WIN' if GAME_WON else 'LOST'} PERFORMANCE:{env.agents[0].performance}")
+            print(f"AGENT:{agent_program.__name__}\tRUN:{run}/{runs}\tSTEPS:{steps}\tRESULT:{'WIN' if GAME_WON else 'LOST'}\tPERFORMANCE:{env.agents[0].performance:5}\t\tTIME:{elapsed_time:.4f}s")
             
             # Remove the agent from the environment
             env.delete_thing(agent)
