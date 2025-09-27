@@ -6,16 +6,17 @@
 # Class:        Knowledge Representation
 # Assignment:   1
 #
-# The 2D world is comprised of a 4 by 3 grid of blocks. 
-# There is one obstacle block that no agent can move to at (1, 1)
+# The 2D world is comprised of a grid of blocks.
+# There is one obstacle block that no agent can move to
 # An agent gets charged some points (sum of x and y co-ordinates) for making a move.
-# An agent gets penalised 50 points if it lands on the penalty block (3, 1)
-# If the agent reaches the winning block (3, 0) it gets 100 points, wins the game and
+# An agent gets penalised 50 points if it lands on the penalty block
+# If the agent reaches the winning block it gets 100 points, wins the game and
 # the game ends
 # If the agent does not reach the winning block in the set number of moves, the game ends
 # and the agent has lost the game.
 #
-# Here is a map of the 2D world
+# Here is an example map of the 2D world 
+# (4 by 3 grid, obstacle at (1, 1), penalty at (3, 1) and winning block at (3, 0))
 ┌──────────┬──────────┬──────────┬──────────┐
 │(0,0)     │(1,0)     │(2,0)     │(3,0)     │
 │          │          │          │          │
@@ -31,8 +32,9 @@
 └──────────┴──────────┴──────────┴──────────┘
 
 
-#  Agents:  Random Agent, picks the noxt move randomly
-#           Reflex agent, always moves to the cheapest adjacent square.
+#  Agents:  Random Agent, picks the next move randomly (for comparison only)
+#           Simple Reflex agent, always moves to the cheapest adjacent square.
+#           Model based reflex agent, uses a model to predict the future.
 #           Goal Based Agent, uses the history of precepts to determine the next move.
 
 
@@ -41,9 +43,23 @@
 import sys
 import os
 import random
+import argparse
 
-# Get the parent dir of the current directory
-parent_dir = os.path.dirname(os.getcwd())
+# Parse command line arguments
+parser = argparse.ArgumentParser(description='Grid World Environment Simulation')
+parser.add_argument('-v', '--verbose', action='store_true',
+                    help='Print detailed movement information')
+parser.add_argument('-s', '--steps', type=int, required=True,
+                    help='Number of steps to run the simulation (mandatory)')
+parser.add_argument('-r', '--runs', type=int, required=True,
+                    help='Number of times to run each agent (mandatory)')
+args = parser.parse_args()
+
+# Get the absolute path of the script's directory
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Get the parent directory (project root)
+parent_dir = os.path.dirname(script_dir)
 
 # Add the parent directory to sys.path
 sys.path.append(parent_dir)
@@ -51,8 +67,9 @@ sys.path.append(parent_dir)
 # Now you can import a module from the parent directory
 from agents4e import Thing, XYEnvironment, Agent, Obstacle
 
-
+# A global variable to keep track of whether the game is won or not
 GAME_WON=False
+
 
 # Define custom destination blocks
 class PositiveDestination(Thing):
@@ -78,13 +95,13 @@ class GridWorldEnvironment(XYEnvironment):
         Returns the available moves for an agent in the given environment.
         """
         x, y = agent.location
-        
-        # Get positions of all obstacles in the environment
+
+        # A list of positions of all obstacles in the environment
         obstacle_positions = [
                             (thing.location[0], thing.location[1])
                             for thing in env.things
                             if isinstance(thing, Obstacle)]
-        
+
         return self.get_available_moves(x, y, env.width, env.height, obstacle_positions)
 
     def percept(self, agent):
@@ -144,8 +161,8 @@ class GridWorldEnvironment(XYEnvironment):
                                                              self.width,
                                                             self.height,
                                                          obstacle_positions)):
-
-            print(f"❌ Tried to go [{action:5}] from {agent.location}, but cant go in that direction")
+            if args.verbose:
+                print(f"❌ Tried to go [{action:5}] from {agent.location}, but cant go in that direction")
             return
 
         if action == 'up':
@@ -158,7 +175,8 @@ class GridWorldEnvironment(XYEnvironment):
             agent.location =  (agent.location[0] + 1, agent.location[1])  # Move right (increase x)
         else:
             agent.location =  (agent.location[0], agent.location[1])
-        print(f"✅ You  moved [{action:5}] from {initial_location} to {agent.location} successfully : Performance penalty: {agent.location[0] + agent.location[1]:4}  Performance Total: {agent.performance:4}")
+        if args.verbose:
+            print(f"✅ You  moved [{action:5}] from {initial_location} to {agent.location} successfully : Performance penalty: {agent.location[0] + agent.location[1]:4}  Performance Total: {agent.performance:4}")
 
         # Charge the agent some points to the agent for making a move
         agent.performance -= (agent.location[0] + agent.location[1])
@@ -167,15 +185,23 @@ class GridWorldEnvironment(XYEnvironment):
         positive_destinations = self.list_things_at(agent.location, PositiveDestination)
         if positive_destinations:
             agent.performance += 100
-            print("Agent reached winning destination! Performance increase 100.")
-            print(f"🎉 Congratulations, you WON the game with a score of {agent.performance}!!")
+            if args.verbose:
+                print("Agent reached winning destination! Performance increase 100.")
+                print(f"🎉 Congratulations, you WON the game with a score of {agent.performance}!!")
+                print("👏 Well done! You've successfully completed the game!")
             GAME_WON=True
 
         # Check if agent is at a penalty destination
         negative_destinations = self.list_things_at(agent.location, NegativeDestination)
         if negative_destinations:
             agent.performance -= 50
-            print(f"😭 You have reached the penalty destination!             : Performance penalty:   50  Performance Total: {agent.performance:4}")
+            if args.verbose:
+                print(f"😭 You have reached the penalty destination!             : Performance penalty:   50  Performance Total: {agent.performance:4}")
+
+    def is_done(self):
+        """The environment is done if the agent has won the game or if no agents are alive."""
+        global GAME_WON
+        return GAME_WON or super().is_done()
 
 
 class ReflexAgent(Agent):
@@ -207,60 +233,126 @@ class RandomAgent(Agent):
        The agent returns a random action """
     def __init__(self): 
         super().__init__(self.random_move)
-    
+
     def random_move(self, percept):
         return random.choice(['down', 'left', 'up', 'right'])
 
 
-
 # Create and set up the environment
-def create_gridworld_environment(width, height, env_agent):
+def create_gridworld_environment(width, height):
 
     # Create the 2D grid world with the set width and height
     env = GridWorldEnvironment(width, height)
 
-    # Set the poitions of the obstacle, the penalty block and the winning block
-    obstacle_x = 1
-    obstacle_y = 1
-    pos_x = 3
-    pos_y = 0
-    neg_x = 3
-    neg_y = 1
+    # Set random positions for the obstacle, the penalty block and the winning block
+    # Create a list to track occupied positions
+    occupied_positions = []
+
+    # Generate random position for obstacle
+    obstacle_x = random.randint(0, width - 1)
+    obstacle_y = random.randint(0, height - 1)
+    occupied_positions.append((obstacle_x, obstacle_y))
+
+    # Generate random position for positive destination (winning block)
+    while True:
+        pos_x = random.randint(0, width - 1)
+        pos_y = random.randint(0, height - 1)
+        if (pos_x, pos_y) not in occupied_positions:
+            occupied_positions.append((pos_x, pos_y))
+            break
+
+    # Generate random position for negative destination (penalty block)
+    while True:
+        neg_x = random.randint(0, width - 1)
+        neg_y = random.randint(0, height - 1)
+        if (neg_x, neg_y) not in occupied_positions:
+            occupied_positions.append((neg_x, neg_y))
+            break
 
     # Add the obstacle, the penalty block and the winning block to the environment
     env.add_thing(Obstacle(), (obstacle_x, obstacle_y))
     env.add_thing(PositiveDestination(), (pos_x, pos_y))
     env.add_thing(NegativeDestination(), (neg_x, neg_y))
 
-    # Create and add the agent to the environment
-    agent = Agent(env_agent)
-    random_position = (random.randint(0, width - 1), random.randint(0, height - 1))
-    env.add_thing(agent, random_position)
+    if args.verbose:
+        print(f"Obstacle location is {obstacle_x}, {obstacle_y}")
+        print(f"Positive location is {pos_x}, {pos_y}")
+        print(f"Negative location is {neg_x}, {neg_y}")
 
-    print(f"Obstacle location is {obstacle_x}, {obstacle_y}")
-    print(f"Positive location is {pos_x}, {pos_y}")
-    print(f"Negative location is {neg_x}, {neg_y}")
-    print(f"Starting position is {random_position}")
-
-    return env
+    return env, occupied_positions
 
 
-def main():
+def building_your_world(steps, runs):
     global GAME_WON
 
-    # Generate and run the environment for 20 steps with a list of agents
-    agent_list =  [RandomAgent().random_move, ReflexAgent().cheapest_move]
-    for agent in agent_list:
+    # Generate and run the environment for {steps} steps with a list of agents
+    agent_list = [RandomAgent().random_move, ReflexAgent().cheapest_move]
+    
+    for agent_program in agent_list:
+        print("")
         print("********************************************************")
-        print(f"* Agent: {agent.__name__:45} *")
+        print(f"* Agent: {agent_program.__name__:45} *")
         print("********************************************************")
-        env = create_gridworld_environment(4, 3, agent)
-        env.run(20)
-        if not GAME_WON:
-            print(f"😔 Winning location not found.. {agent.__name__} lost with a score of {env.agents[0].performance}")
-            GAME_WON=False
-        print("\n")
+        
+        # Statistics for this agent across all runs
+        total_performance = 0
+        wins = 0
+        
+        # Run the agent the specified number of times
+        for run in range(1, runs + 1):
+            # Create a new environment for each run
+            width, height = 10, 10
+            env, occupied_positions = create_gridworld_environment(width, height)
+            
+            if args.verbose:
+                print(f"\nRun {run} of {runs}")
+            
+            # Create a new agent
+            agent = Agent(agent_program)
+            
+            # Generate random position for agent that doesn't overlap with other objects
+            while True:
+                random_position = (random.randint(0, width - 1), random.randint(0, height - 1))
+                if random_position not in occupied_positions:
+                    break
+            
+            # Add the agent to the environment
+            env.add_thing(agent, random_position)
+            if args.verbose:
+                print(f"Starting position is {random_position}")
+            
+            # Run the simulation
+            env.run(steps)
+            
+            # Update statistics
+            total_performance += env.agents[0].performance
+            if GAME_WON:
+                wins += 1
+                
+            # Print results for this run
+            print(f"AGENT: {agent_program.__name__:20} RUN:{run}/{runs} STEPS:{steps} RESULT:{'WIN' if GAME_WON else 'LOST'} PERFORMANCE:{env.agents[0].performance}")
+            
+            # Remove the agent from the environment
+            env.delete_thing(agent)
+            
+            # Reset the global variable GAME_WON for the next run
+            GAME_WON = False
+        
+        # Print summary statistics for this agent
+        avg_performance = total_performance / runs
+        win_rate = (wins / runs) * 100
+        print(f"\nSummary for {agent_program.__name__}:")
+        print(f"Average Performance: {avg_performance:.2f}")
+        print(f"Win Rate: {win_rate:.2f}% ({wins}/{runs})")
+
+
+def searching_your_world():
+    pass
 
 
 if __name__ == "__main__":
-    main()
+    # If not in verbose mode, print a message about the -v option
+    if not args.verbose:
+        print("Run with -v or --verbose to see detailed movement information")
+    building_your_world(args.steps, args.runs)
+    searching_your_world()
