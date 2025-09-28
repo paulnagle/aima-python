@@ -15,8 +15,8 @@
 # If the agent does not reach the winning block in the set number of moves, the game ends
 # and the agent has lost the game.
 #
-# Here is an example map of the 2D world 
-# (4 by 3 grid, obstacle at (1, 1), penalty at (3, 1) and winning block at (3, 0))
+# Here is an example map of the 2D world
+# (width 4 by depth 3 grid, obstacle at (1, 1), penalty at (3, 1) and winning block at (3, 0))
 ┌──────────┬──────────┬──────────┬──────────┐
 │(0,0)     │(1,0)     │(2,0)     │(3,0)     │
 │          │          │          │          │
@@ -47,14 +47,25 @@ import argparse
 import time
 
 # Parse command line arguments
-parser = argparse.ArgumentParser(description='Grid World Environment Simulation')
+parser = argparse.ArgumentParser(description='A1_COMP9016_Nagle_JohnPaul_R00065426')
 parser.add_argument('-v', '--verbose', action='store_true',
-                    help='Print detailed movement information')
+                    help='Print detailed movement and agent information')
 parser.add_argument('-s', '--steps', type=int, required=True,
-                    help='Number of steps to run the simulation (mandatory)')
+                    help='Number of steps per run to attempt to win the game (mandatory)')
 parser.add_argument('-r', '--runs', type=int, required=True,
                     help='Number of times to run each agent (mandatory)')
+parser.add_argument('-w', '--width', type=int, required=True,
+                    help='Width of the grid world (mandatory)')
+parser.add_argument('-d', '--depth', type=int, required=True,
+                    help='depth of the grid world (mandatory)')
 args = parser.parse_args()
+
+
+def log_message(message):
+    """Log a message if verbose mode is enabled."""
+    if args.verbose:
+        print(message)
+
 
 # Get the absolute path of the script's directory
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -85,10 +96,10 @@ class NegativeDestination(Thing):
 
 class GridWorldEnvironment(XYEnvironment):
     """ This environment has a grid of rows and columns with obstacles """
-    def __init__(self, width, height):
+    def __init__(self, width, depth):
         super().__init__()
         self.width = width
-        self.height = height
+        self.depth = depth
 
     def get_agent_percepts(self, agent, env):
         """ Returns the available moves for an agent in the given environment. """
@@ -100,7 +111,7 @@ class GridWorldEnvironment(XYEnvironment):
                             for thing in env.things
                             if isinstance(thing, Obstacle)]
 
-        return self.get_available_moves(x, y, env.width, env.height, obstacle_positions)
+        return self.get_available_moves(x, y, env.width, env.depth, obstacle_positions)
 
     def percept(self, agent):
         """ In this environment, a percept is a list of available movements from the agent's current location,
@@ -108,14 +119,15 @@ class GridWorldEnvironment(XYEnvironment):
             new location.
             The movement directions could be 'up', 'down', 'left', or 'right'. """
         x, y = agent.location
-        obstacle_positions = [(thing.location[0], thing.location[1])
-                             for thing in self.things 
-                             if isinstance(thing, Obstacle)]
+        obstacle_positions = [
+                            (thing.location[0], thing.location[1])
+                            for thing in self.things 
+                            if isinstance(thing, Obstacle)]
 
-        available_moves_with_costs = self.get_available_moves(x, y, self.width, self.height, obstacle_positions)
+        available_moves_with_costs = self.get_available_moves(x, y, self.width, self.depth, obstacle_positions)
         return available_moves_with_costs
 
-    def get_available_moves(self, x, y, width, height, obstacles=None):
+    def get_available_moves(self, x, y, width, depth, obstacles=None):
         """ Returns a list of available directions (up, down, left, right) that an agent can move
             based on its current position, grid boundaries and obstacles """
 
@@ -129,7 +141,7 @@ class GridWorldEnvironment(XYEnvironment):
             available_moves.append(('up', (x + (y-1))))
 
         # Check down (down is increasing y)
-        if y < height-1 and (x, y+1) not in obstacles:
+        if y < depth-1 and (x, y+1) not in obstacles:
             available_moves.append(('down', (x + (y+1))))
 
         # Check right (right is increasing x)
@@ -148,52 +160,65 @@ class GridWorldEnvironment(XYEnvironment):
         initial_location = agent.location
 
         # Calculate obstacle positions
-        obstacle_positions = [(thing.location[0], thing.location[1])
-                              for thing in self.things
-                              if isinstance(thing, Obstacle)]
+        obstacle_positions = [
+                            (thing.location[0], thing.location[1])
+                            for thing in self.things
+                            if isinstance(thing, Obstacle)]
 
-        # Get the list of moves available to the agent, and exit if the current move is invalid
-        if not any(action in tup for tup in self.get_available_moves(agent.location[0],
-                                                                 agent.location[1],
-                                                             self.width,
-                                                            self.height,
-                                                         obstacle_positions)):
-            if args.verbose:
-                print(f"❌ Tried to go [{action:5}] from {agent.location}, but cant go in that direction")
+        # Check if move is valid
+        if not self._is_valid_move(agent, action, obstacle_positions):
+            log_message(f"❌ Tried to go [{action:5}] from {agent.location}, but cant go in that direction")
             return
 
-        if action == 'up':
-            agent.location = (agent.location[0], agent.location[1] - 1)  # Move up (decrease y)
-        elif action == 'down':
-            agent.location =  (agent.location[0], agent.location[1] + 1)  # Move down (increase y)
-        elif action == 'left':
-            agent.location =  (agent.location[0] - 1, agent.location[1])  # Move left (decrease x)
-        elif action == 'right':
-            agent.location =  (agent.location[0] + 1, agent.location[1])  # Move right (increase x)
-        else:
-            agent.location =  (agent.location[0], agent.location[1])
-        if args.verbose:
-            print(f"✅ You  moved [{action:5}] from {initial_location} to {agent.location} successfully : Performance penalty: {agent.location[0] + agent.location[1]:4}  Performance Total: {agent.performance:4}")
+        # Update agent location based on action
+        location_updates = {
+            'up': (0, -1),
+            'down': (0, 1),
+            'left': (-1, 0),
+            'right': (1, 0)
+        }
 
-        # Charge the agent some points to the agent for making a move
+        if action in location_updates:
+            dx, dy = location_updates[action]
+            agent.location = (agent.location[0] + dx, agent.location[1] + dy)
+
+        log_message(f"✅ You  moved [{action:5}] from {initial_location} to {agent.location} successfully : Performance penalty: {agent.location[0] + agent.location[1]:4}  Performance Total: {agent.performance:4}")
+
+        # Charge the agent for making a move (the cost is the sum of the x and y co-ordinates)
         agent.performance -= (agent.location[0] + agent.location[1])
 
-        # Check if agent is at the winning destination
+        # Check destinations and apply effects
+        self._check_destinations(agent)
+
+    def _is_valid_move(self, agent, action, obstacle_positions):
+        """Check if the action is valid for the agent's current position."""
+        available_moves = self.get_available_moves(
+            agent.location[0],
+            agent.location[1],
+            self.width,
+            self.depth,
+            obstacle_positions
+        )
+        return any(action in tup for tup in available_moves)
+
+    def _check_destinations(self, agent):
+        """Check if agent is at special destinations and apply effects."""
+        global GAME_WON
+
+        # Check for positive destination (winning)
         positive_destinations = self.list_things_at(agent.location, PositiveDestination)
         if positive_destinations:
             agent.performance += 100
-            if args.verbose:
-                print("Agent reached winning destination! Performance increase 100.")
-                print(f"🎉 Congratulations, you WON the game with a score of {agent.performance}!!")
-                print("👏 Well done! You've successfully completed the game!")
-            GAME_WON=True
+            log_message("Agent reached winning destination! Performance increase 100.")
+            log_message(f"🎉 Congratulations, you WON the game with a score of {agent.performance}!!")
+            log_message("👏 Well done! You've successfully completed the game!")
+            GAME_WON = True
 
-        # Check if agent is at a penalty destination
+        # Check for negative destination (penalty)
         negative_destinations = self.list_things_at(agent.location, NegativeDestination)
         if negative_destinations:
             agent.performance -= 50
-            if args.verbose:
-                print(f"😭 You have reached the penalty destination!             : Performance penalty:   50  Performance Total: {agent.performance:4}")
+            log_message(f"😭 You have reached the penalty destination!             : Performance penalty:   50  Performance Total: {agent.performance:4}")
 
     def is_done(self):
         """ The environment is done if the agent has won the game or if no agents are alive. """
@@ -234,12 +259,12 @@ class RandomAgent(Agent):
 
 
 # Create and set up the environment
-def create_gridworld_environment(width, height):
-    """ Create a 2D grid world environment with the specified width and height.
+def create_gridworld_environment(width, depth):
+    """ Create a 2D grid world environment with the specified width and depth.
         The environment is represented as a 2D list of cells, where each cell can be either
         a wall, a negative destination (penalty block), or a positive destination (winning block)."""
-    # Create the 2D grid world with the set width and height
-    env = GridWorldEnvironment(width, height)
+    # Create the 2D grid world with the set width and depth
+    env = GridWorldEnvironment(width, depth)
 
     # Set random positions for the obstacle, the penalty block and the winning block
     # Create a list to track occupied positions
@@ -247,13 +272,13 @@ def create_gridworld_environment(width, height):
 
     # Generate random position for obstacle
     obstacle_x = random.randint(0, width - 1)
-    obstacle_y = random.randint(0, height - 1)
+    obstacle_y = random.randint(0, depth - 1)
     occupied_positions.append((obstacle_x, obstacle_y))
 
     # Generate random position for positive destination (winning block)
     while True:
         pos_x = random.randint(0, width - 1)
-        pos_y = random.randint(0, height - 1)
+        pos_y = random.randint(0, depth - 1)
         if (pos_x, pos_y) not in occupied_positions:
             occupied_positions.append((pos_x, pos_y))
             break
@@ -261,7 +286,7 @@ def create_gridworld_environment(width, height):
     # Generate random position for negative destination (penalty block)
     while True:
         neg_x = random.randint(0, width - 1)
-        neg_y = random.randint(0, height - 1)
+        neg_y = random.randint(0, depth - 1)
         if (neg_x, neg_y) not in occupied_positions:
             occupied_positions.append((neg_x, neg_y))
             break
@@ -271,10 +296,9 @@ def create_gridworld_environment(width, height):
     env.add_thing(PositiveDestination(), (pos_x, pos_y))
     env.add_thing(NegativeDestination(), (neg_x, neg_y))
 
-    if args.verbose:
-        print(f"Obstacle location is {obstacle_x}, {obstacle_y}")
-        print(f"Positive location is {pos_x}, {pos_y}")
-        print(f"Negative location is {neg_x}, {neg_y}")
+    log_message(f"Obstacle location is {obstacle_x}, {obstacle_y}")
+    log_message(f"Positive location is {pos_x}, {pos_y}")
+    log_message(f"Negative location is {neg_x}, {neg_y}")
 
     return env, occupied_positions
 
@@ -286,37 +310,35 @@ def building_your_world(steps, runs):
     agent_list = [RandomAgent().random_move, ReflexAgent().cheapest_move]
 
     for agent_program in agent_list:
-        print("")
-        print("********************************************************")
-        print(f"* Agent: {agent_program.__name__:45} *")
-        print("********************************************************")
+        log_message("")
+        log_message("********************************************************")
+        log_message(f"* Agent: {agent_program.__name__:45} *")
+        log_message("********************************************************")
 
         # Statistics for this agent across all runs
         total_performance = 0
         wins = 0
 
+        # Create a new environment for the set of runs per agent type
+        width, depth = args.width, args.depth
+        env, occupied_positions = create_gridworld_environment(width, depth)
+
         # Run the agent the specified number of times
         for run in range(1, runs + 1):
-            # Create a new environment for each run
-            width, height = 10, 10
-            env, occupied_positions = create_gridworld_environment(width, height)
-
-            if args.verbose:
-                print(f"\nRun {run} of {runs}")
+            log_message(f"\nRun {run} of {runs}")
 
             # Create a new agent
             agent = Agent(agent_program)
 
             # Generate random position for agent that doesn't overlap with other objects
             while True:
-                random_position = (random.randint(0, width - 1), random.randint(0, height - 1))
+                random_position = (random.randint(0, width - 1), random.randint(0, depth - 1))
                 if random_position not in occupied_positions:
                     break
 
             # Add the agent to the environment
             env.add_thing(agent, random_position)
-            if args.verbose:
-                print(f"Starting position is {random_position}")
+            log_message(f"Starting position is {random_position}")
 
             # Run the simulation and measure time
             start_time = time.time()
@@ -330,7 +352,7 @@ def building_your_world(steps, runs):
                 wins += 1
 
             # Print results for this run
-            print(f"AGENT:{agent_program.__name__}\tRUN:{run}/{runs}\tSTEPS:{steps}\tRESULT:{'WIN' if GAME_WON else 'LOST'}\tPERFORMANCE:{env.agents[0].performance:5}\t\tTIME:{elapsed_time:.4f}s")
+            log_message(f"AGENT:{agent_program.__name__}\tRUN:{run}/{runs}\tSTEPS:{steps}\tRESULT:{'WIN' if GAME_WON else 'LOSE'}\tPERFORMANCE:{env.agents[0].performance:5}\t\tTIME:{elapsed_time:.4f}s")
 
             # Remove the agent from the environment
             env.delete_thing(agent)
@@ -351,8 +373,6 @@ def searching_your_world():
 
 
 if __name__ == "__main__":
-    # If not in verbose mode, print a message about the -v option
-    if not args.verbose:
-        print("Run with -v or --verbose to see detailed movement information")
+    print("Use -h or --help to see all available command line options")
     building_your_world(args.steps, args.runs)
     searching_your_world()
