@@ -57,9 +57,7 @@ sys.path.append(parent_dir)
 from agents4e import Thing, XYEnvironment, Agent, Obstacle
 
 
-
-
-# Define a dictionary mapping directions to coordinate changes
+# Define a global utility dictionary mapping directions to coordinate changes
 direction_to_coords = {
     'up': (0, -1),
     'down': (0, 1),
@@ -68,17 +66,17 @@ direction_to_coords = {
 }
 
 
+# A global variable to keep track of whether the game is won or not
+GAME_WON=False
+
+
+# A global function to display a message based on the verbose command line parameter being True
 def log_message(message):
     """Log a message if verbose mode is enabled."""
     if args.verbose:
         print(message)
 
 
-# A global variable to keep track of whether the game is won or not
-GAME_WON=False
-
-
-# Define custom destination blocks
 class PositiveDestination(Thing):
     """ A destination that awards 100 points and wins the game when an agent reaches it """
     pass
@@ -220,6 +218,17 @@ class GridWorldEnvironment(XYEnvironment):
         return GAME_WON or super().is_done()
 
 
+class RandomAgent(Agent):
+    """ A simple agent program that moves randomly. The agent does receive a percept, 
+        but ignores it, as it is a random agent. The agent returns a random action """
+    def __init__(self):
+        super().__init__(self.random_move)
+
+    def random_move(self, percept):
+        """ This function takes a percept and returns a random move """
+        return random.choice(['down', 'left', 'up', 'right'])
+
+
 class ReflexAgent(Agent):
     """ A reflex agent that always moves to the cheapest adjacent square. 
         This agent doesnt care about the percept list. """
@@ -241,17 +250,6 @@ class ReflexAgent(Agent):
         return cheapest[0]
 
 
-class RandomAgent(Agent):
-    """ A simple agent program that moves randomly. The agent does receive a percept, 
-        but ignores it, as it is a random agent. The agent returns a random action """
-    def __init__(self):
-        super().__init__(self.random_move)
-
-    def random_move(self, percept):
-        """ This function takes a percept and returns a random move """
-        return random.choice(['down', 'left', 'up', 'right'])
-
-
 class ModelBasedReflexAgent(Agent):
     """A model-based reflex agent that uses an internal model of the environment to make decisions.
        The internal model is built up as the agent moves around the environment"""
@@ -265,7 +263,6 @@ class ModelBasedReflexAgent(Agent):
             'width': None,                        # Will be inferred from percepts
             'depth': None,                        # Will be inferred from percepts
             'obstacles': set(),                   # Known obstacle positions
-            'positive_dest': None,                # Winning block position (if known)
             'negative_dest': None,                # Penalty block position (if known)
             'visited': set(),                     # Positions the agent has visited
             'last_performance': 0,                # Last known performance value
@@ -338,12 +335,6 @@ class ModelBasedReflexAgent(Agent):
                 # If we found a penalty block, switch to exploration mode
                 self.model['exploration_mode'] = True
 
-            # If performance increased significantly, might be a winning block
-            if perf_change > 50:  # Significant reward
-                self.model['positive_dest'] = state['location']
-                # If we found a winning block, switch to exploitation mode
-                self.model['exploration_mode'] = False
-
         # Add current location to visited positions
         self.model['visited'].add(state['location'])
 
@@ -384,52 +375,7 @@ class ModelBasedReflexAgent(Agent):
         if not percept:
             return None
 
-        # Rule 1: If we know where the winning block is, move towards it
-        if self.model['positive_dest'] is not None and self.state is not None:
-            # Calculate direction to move towards the winning block
-            x, y = self.state['location']
-            win_pos = self.model['positive_dest']
-
-            # Make sure win_pos is a valid tuple
-            if isinstance(win_pos, tuple) and len(win_pos) == 2:
-                win_x, win_y = win_pos
-
-                # Determine best direction to move
-                directions = []
-
-                # Prioritize horizontal movement first if further away
-                if abs(x - win_x) > abs(y - win_y):
-                    if x < win_x:
-                        directions.append('right')
-                    elif x > win_x:
-                        directions.append('left')
-
-                    if y < win_y:
-                        directions.append('down')
-                    elif y > win_y:
-                        directions.append('up')
-                else:
-                    # Prioritize vertical movement first if further away
-                    if y < win_y:
-                        directions.append('down')
-                    elif y > win_y:
-                        directions.append('up')
-
-                    if x < win_x:
-                        directions.append('right')
-                    elif x > win_x:
-                        directions.append('left')
-
-                # Filter available moves that match our desired directions
-                possible_moves = [move for move in percept if move[0] in directions]
-                if possible_moves:
-                    # Choose the first direction in our priority list
-                    for direction in directions:
-                        for move in possible_moves:
-                            if move[0] == direction:
-                                return direction
-
-        # Rule 2: If we know where the penalty block is, avoid it
+        # Rule 1: If we know where the penalty block is, avoid it
         if self.model['negative_dest'] is not None and self.state is not None:
             # Filter out moves that would lead to the penalty block
             neg_pos = self.model['negative_dest']
@@ -454,7 +400,7 @@ class ModelBasedReflexAgent(Agent):
                     # Continue with the remaining rules using only safe moves
                     percept = safe_moves
 
-        # Rule 3: Avoid getting stuck in loops
+        # Rule 2: Avoid getting stuck in loops
         if len(self.model['move_history']) >= 4:
             # Check for simple loops like up-down-up-down or left-right-left-right
             last_moves = self.model['move_history'][-4:]
@@ -467,7 +413,7 @@ class ModelBasedReflexAgent(Agent):
                     # Choose the cheapest non-loop move
                     return min(non_loop_moves, key=lambda x: x[1])[0]
 
-        # Rule 4: Prefer moves to unvisited positions
+        # Rule 3 Prefer moves to unvisited positions
         if self.state is not None:
             unvisited_moves = []
             for move in percept:
@@ -487,7 +433,7 @@ class ModelBasedReflexAgent(Agent):
                 # Choose the cheapest unvisited move
                 return min(unvisited_moves, key=lambda x: x[1])[0]
 
-        # Rule 5: Choose the move with the lowest cost
+        # Rule 4: Choose the move with the lowest cost
         return min(percept, key=lambda x: x[1])[0]
 
     def opposite_direction(self, direction):
@@ -563,8 +509,7 @@ def building_your_world():
         wins = 0
 
         # Create a new environment for the set of runs per agent type
-        width, depth = args.width, args.depth
-        env, occupied_positions = create_gridworld_environment(width, depth)
+        env, occupied_positions = create_gridworld_environment(args.width, args.depth)
 
         # Run the agent the specified number of times
         for run in range(1, args.runs + 1):
@@ -575,7 +520,7 @@ def building_your_world():
 
             # Generate random position for agent that doesn't overlap with other objects
             while True:
-                random_position = (random.randint(0, width - 1), random.randint(0, depth - 1))
+                random_position = (random.randint(0, args.width - 1), random.randint(0, args.depth - 1))
                 if random_position not in occupied_positions:
                     break
 
