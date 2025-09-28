@@ -32,11 +32,9 @@
 └──────────┴──────────┴──────────┴──────────┘
 
 
-#  Agents:  Random Agent, picks the next move randomly (for comparison only)
+#  Agents:  Random Agent, picks the next move randomly
 #           Simple Reflex agent, always moves to the cheapest adjacent square.
-#           Model based reflex agent, uses a model to predict the future.
-#           Goal Based Agent, uses the history of precepts to determine the next move.
-
+#           Model based reflex agent, uses an internal model to predict the what the best move will be.
 
 """
 
@@ -45,27 +43,6 @@ import os
 import random
 import argparse
 import time
-
-# Parse command line arguments
-parser = argparse.ArgumentParser(description='A1_COMP9016_Nagle_JohnPaul_R00065426')
-parser.add_argument('-v', '--verbose', action='store_true',
-                    help='Print detailed movement and agent information')
-parser.add_argument('-s', '--steps', type=int, required=True,
-                    help='Number of steps per run to attempt to win the game (mandatory)')
-parser.add_argument('-r', '--runs', type=int, required=True,
-                    help='Number of times to run each agent (mandatory)')
-parser.add_argument('-w', '--width', type=int, required=True,
-                    help='Width of the grid world (mandatory)')
-parser.add_argument('-d', '--depth', type=int, required=True,
-                    help='depth of the grid world (mandatory)')
-args = parser.parse_args()
-
-
-def log_message(message):
-    """Log a message if verbose mode is enabled."""
-    if args.verbose:
-        print(message)
-
 
 # Get the absolute path of the script's directory
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -78,6 +55,24 @@ sys.path.append(parent_dir)
 
 # Now you can import a module from the parent directory
 from agents4e import Thing, XYEnvironment, Agent, Obstacle
+
+
+
+
+# Define a dictionary mapping directions to coordinate changes
+direction_to_coords = {
+    'up': (0, -1),
+    'down': (0, 1),
+    'left': (-1, 0),
+    'right': (1, 0)
+}
+
+
+def log_message(message):
+    """Log a message if verbose mode is enabled."""
+    if args.verbose:
+        print(message)
+
 
 # A global variable to keep track of whether the game is won or not
 GAME_WON=False
@@ -106,10 +101,12 @@ class GridWorldEnvironment(XYEnvironment):
         x, y = agent.location
 
         # A list of positions of all obstacles in the environment
-        obstacle_positions = [
-                            (thing.location[0], thing.location[1])
-                            for thing in env.things
-                            if isinstance(thing, Obstacle)]
+        obstacle_positions = []
+        for thing in env.things:
+            if isinstance(thing, Obstacle):
+                # Safely get location if it exists
+                if hasattr(thing, 'location') and thing.location is not None:
+                    obstacle_positions.append(thing.location)
 
         return self.get_available_moves(x, y, env.width, env.depth, obstacle_positions)
 
@@ -119,10 +116,12 @@ class GridWorldEnvironment(XYEnvironment):
             new location.
             The movement directions could be 'up', 'down', 'left', or 'right'. """
         x, y = agent.location
-        obstacle_positions = [
-                            (thing.location[0], thing.location[1])
-                            for thing in self.things 
-                            if isinstance(thing, Obstacle)]
+        obstacle_positions = []
+        for thing in self.things:
+            if isinstance(thing, Obstacle):
+                # Safely get location if it exists
+                if hasattr(thing, 'location') and thing.location is not None:
+                    obstacle_positions.append(thing.location)
 
         available_moves_with_costs = self.get_available_moves(x, y, self.width, self.depth, obstacle_positions)
         return available_moves_with_costs
@@ -160,26 +159,21 @@ class GridWorldEnvironment(XYEnvironment):
         initial_location = agent.location
 
         # Calculate obstacle positions
-        obstacle_positions = [
-                            (thing.location[0], thing.location[1])
-                            for thing in self.things
-                            if isinstance(thing, Obstacle)]
+        obstacle_positions = []
+        for thing in self.things:
+            if isinstance(thing, Obstacle):
+                # Safely get location if it exists
+                if hasattr(thing, 'location') and thing.location is not None:
+                    obstacle_positions.append(thing.location)
 
         # Check if move is valid
         if not self._is_valid_move(agent, action, obstacle_positions):
             log_message(f"❌ Tried to go [{action:5}] from {agent.location}, but cant go in that direction")
             return
 
-        # Update agent location based on action
-        location_updates = {
-            'up': (0, -1),
-            'down': (0, 1),
-            'left': (-1, 0),
-            'right': (1, 0)
-        }
-
-        if action in location_updates:
-            dx, dy = location_updates[action]
+        # Update agent location based on action using the direction_to_coords dictionary
+        if action in direction_to_coords:
+            dx, dy = direction_to_coords[action]
             agent.location = (agent.location[0] + dx, agent.location[1] + dy)
 
         log_message(f"✅ You  moved [{action:5}] from {initial_location} to {agent.location} successfully : Performance penalty: {agent.location[0] + agent.location[1]:4}  Performance Total: {agent.performance:4}")
@@ -258,6 +252,255 @@ class RandomAgent(Agent):
         return random.choice(['down', 'left', 'up', 'right'])
 
 
+class ModelBasedReflexAgent(Agent):
+    """A model-based reflex agent that uses an internal model of the environment to make decisions.
+       The internal model is built up as the agent moves around the environment"""
+
+    def __init__(self):
+        # Initialize the agent with the model-based reflex program
+        super().__init__(self.model_based_reflex_agent)
+
+        # Initialize the model
+        self.model = {
+            'width': None,                        # Will be inferred from percepts
+            'depth': None,                        # Will be inferred from percepts
+            'obstacles': set(),                   # Known obstacle positions
+            'positive_dest': None,                # Winning block position (if known)
+            'negative_dest': None,                # Penalty block position (if known)
+            'visited': set(),                     # Positions the agent has visited
+            'last_performance': 0,                # Last known performance value
+            'last_position': None,                # Last position of the agent
+            'move_history': [],                   # History of moves to avoid loops
+            'exploration_mode': True,             # Start in exploration mode
+        }
+
+        # Initialize state and action
+        self.state = None
+        self.action = None
+    
+    def model_based_reflex_agent(self, percept):
+        """The model-based reflex agent program."""
+        # Initialize state if first call
+        if self.state is None:
+            # Make sure we have a location before initializing state
+            if hasattr(self, 'location') and self.location is not None:
+                self.state = {'location': self.location, 'performance': 0}
+                # Add initial location to visited positions
+                self.model['visited'].add(self.location)
+                self.model['last_position'] = self.location
+                self.model['last_performance'] = 0
+
+        # Update the state based on percept and model
+        if self.state is not None:
+            self.state = self.update_state(self.state, self.action, percept)
+
+            # Apply rules to determine the action
+            self.action = self.apply_rules(percept)
+
+            # Record this move in history to detect loops
+            if self.action is not None:
+                self.model['move_history'].append(self.action)
+                # Keep only the last 10 moves in history
+                if len(self.model['move_history']) > 10:
+                    self.model['move_history'] = self.model['move_history'][-10:]
+
+            return self.action
+
+        # If state is not initialized yet, default to a random move
+        if percept:
+            return random.choice([move[0] for move in percept])
+        return None
+
+    def update_state(self, state, action, percept):
+        """Update the state based on percept and model."""
+        # Update the model with the current location
+        if action is not None:
+            # Save the last position and performance
+            self.model['last_position'] = state['location']
+            self.model['last_performance'] = state['performance']
+
+            # Update current location based on the action taken using direction_to_coords
+            x, y = state['location']
+            if action in direction_to_coords:
+                dx, dy = direction_to_coords[action]
+                state['location'] = (x + dx, y + dy)
+            
+            # Update performance in state
+            state['performance'] = self.performance
+            
+            # Check for significant performance changes
+            perf_change = state['performance'] - self.model['last_performance']
+
+            # If performance decreased by more than the move cost, might be a penalty block
+            expected_cost = state['location'][0] + state['location'][1]
+            if perf_change < -expected_cost - 10:  # Significant penalty (more than just move cost)
+                self.model['negative_dest'] = state['location']
+                # If we found a penalty block, switch to exploration mode
+                self.model['exploration_mode'] = True
+
+            # If performance increased significantly, might be a winning block
+            if perf_change > 50:  # Significant reward
+                self.model['positive_dest'] = state['location']
+                # If we found a winning block, switch to exploitation mode
+                self.model['exploration_mode'] = False
+
+        # Add current location to visited positions
+        self.model['visited'].add(state['location'])
+
+        # Try to infer grid dimensions and obstacles from percepts
+        if percept:
+            # Infer possible moves from current position
+            possible_directions = [move[0] for move in percept]
+            x, y = state['location']
+
+            # If we can't move up, we might be at the top edge or there's an obstacle
+            if 'up' not in possible_directions and y > 0:
+                self.model['obstacles'].add((x, y-1))
+
+            # If we can't move down, we might be at the bottom edge or there's an obstacle
+            if 'down' not in possible_directions:
+                # Infer depth if we can't move down
+                if self.model['depth'] is None or y + 1 > self.model['depth']:
+                    self.model['depth'] = y + 1
+                else:
+                    self.model['obstacles'].add((x, y+1))
+
+            # If we can't move left, we might be at the left edge or there's an obstacle
+            if 'left' not in possible_directions and x > 0:
+                self.model['obstacles'].add((x-1, y))
+
+            # If we can't move right, we might be at the right edge or there's an obstacle
+            if 'right' not in possible_directions:
+                # Infer width if we can't move right
+                if self.model['width'] is None or x + 1 > self.model['width']:
+                    self.model['width'] = x + 1
+                else:
+                    self.model['obstacles'].add((x+1, y))
+
+        return state
+
+    def apply_rules(self, percept):
+        """Apply rules to determine the action."""
+        if not percept:
+            return None
+
+        # Rule 1: If we know where the winning block is, move towards it
+        if self.model['positive_dest'] is not None and self.state is not None:
+            # Calculate direction to move towards the winning block
+            x, y = self.state['location']
+            win_pos = self.model['positive_dest']
+
+            # Make sure win_pos is a valid tuple
+            if isinstance(win_pos, tuple) and len(win_pos) == 2:
+                win_x, win_y = win_pos
+
+                # Determine best direction to move
+                directions = []
+
+                # Prioritize horizontal movement first if further away
+                if abs(x - win_x) > abs(y - win_y):
+                    if x < win_x:
+                        directions.append('right')
+                    elif x > win_x:
+                        directions.append('left')
+
+                    if y < win_y:
+                        directions.append('down')
+                    elif y > win_y:
+                        directions.append('up')
+                else:
+                    # Prioritize vertical movement first if further away
+                    if y < win_y:
+                        directions.append('down')
+                    elif y > win_y:
+                        directions.append('up')
+
+                    if x < win_x:
+                        directions.append('right')
+                    elif x > win_x:
+                        directions.append('left')
+
+                # Filter available moves that match our desired directions
+                possible_moves = [move for move in percept if move[0] in directions]
+                if possible_moves:
+                    # Choose the first direction in our priority list
+                    for direction in directions:
+                        for move in possible_moves:
+                            if move[0] == direction:
+                                return direction
+
+        # Rule 2: If we know where the penalty block is, avoid it
+        if self.model['negative_dest'] is not None and self.state is not None:
+            # Filter out moves that would lead to the penalty block
+            neg_pos = self.model['negative_dest']
+
+            # Make sure neg_pos is a valid tuple
+            if isinstance(neg_pos, tuple) and len(neg_pos) == 2:
+                neg_x, neg_y = neg_pos
+                x, y = self.state['location']
+
+                safe_moves = []
+                for move in percept:
+                    direction = move[0]
+                    # Calculate new position using direction_to_coords
+                    if direction in direction_to_coords:
+                        dx, dy = direction_to_coords[direction]
+                        new_pos = (x + dx, y + dy)
+                        
+                        if new_pos != (neg_x, neg_y):
+                            safe_moves.append(move)
+
+                if safe_moves:
+                    # Continue with the remaining rules using only safe moves
+                    percept = safe_moves
+
+        # Rule 3: Avoid getting stuck in loops
+        if len(self.model['move_history']) >= 4:
+            # Check for simple loops like up-down-up-down or left-right-left-right
+            last_moves = self.model['move_history'][-4:]
+            if (last_moves[0] == last_moves[2] and last_moves[1] == last_moves[3] and
+                    self.opposite_direction(last_moves[0]) == last_moves[1]):
+                # We're in a loop, try to break out by choosing a different move
+                loop_moves = {last_moves[0], last_moves[1]}
+                non_loop_moves = [move for move in percept if move[0] not in loop_moves]
+                if non_loop_moves:
+                    # Choose the cheapest non-loop move
+                    return min(non_loop_moves, key=lambda x: x[1])[0]
+
+        # Rule 4: Prefer moves to unvisited positions
+        if self.state is not None:
+            unvisited_moves = []
+            for move in percept:
+                direction = move[0]
+                x, y = self.state['location']
+
+                # Calculate new position using direction_to_coords
+                if direction in direction_to_coords:
+                    dx, dy = direction_to_coords[direction]
+                    new_pos = (x + dx, y + dy)
+                    
+                    # Check if the new position is unvisited
+                    if new_pos not in self.model['visited']:
+                        unvisited_moves.append(move)
+
+            if unvisited_moves:
+                # Choose the cheapest unvisited move
+                return min(unvisited_moves, key=lambda x: x[1])[0]
+
+        # Rule 5: Choose the move with the lowest cost
+        return min(percept, key=lambda x: x[1])[0]
+
+    def opposite_direction(self, direction):
+        """Return the opposite direction."""
+        opposites = {
+            'up': 'down',
+            'down': 'up',
+            'left': 'right',
+            'right': 'left'
+        }
+        return opposites.get(direction)
+
+
 # Create and set up the environment
 def create_gridworld_environment(width, depth):
     """ Create a 2D grid world environment with the specified width and depth.
@@ -303,11 +546,11 @@ def create_gridworld_environment(width, depth):
     return env, occupied_positions
 
 
-def building_your_world(steps, runs):
+def building_your_world():
     global GAME_WON
 
     # Generate and run the environment for {steps} steps with a list of agents
-    agent_list = [RandomAgent().random_move, ReflexAgent().cheapest_move]
+    agent_list = [RandomAgent().random_move, ReflexAgent().cheapest_move, ModelBasedReflexAgent().model_based_reflex_agent]
 
     for agent_program in agent_list:
         log_message("")
@@ -324,8 +567,8 @@ def building_your_world(steps, runs):
         env, occupied_positions = create_gridworld_environment(width, depth)
 
         # Run the agent the specified number of times
-        for run in range(1, runs + 1):
-            log_message(f"\nRun {run} of {runs}")
+        for run in range(1, args.runs + 1):
+            log_message(f"\nRun {run} of {args.runs}")
 
             # Create a new agent
             agent = Agent(agent_program)
@@ -342,30 +585,29 @@ def building_your_world(steps, runs):
 
             # Run the simulation and measure time
             start_time = time.time()
-            env.run(steps)
+            env.run(args.steps)
             end_time = time.time()
             elapsed_time = end_time - start_time
 
             # Update statistics
-            total_performance += env.agents[0].performance
+            total_performance += agent.performance  # Store performance before deletion
             if GAME_WON:
                 wins += 1
 
             # Print results for this run
-            log_message(f"AGENT:{agent_program.__name__}\tRUN:{run}/{runs}\tSTEPS:{steps}\tRESULT:{'WIN' if GAME_WON else 'LOSE'}\tPERFORMANCE:{env.agents[0].performance:5}\t\tTIME:{elapsed_time:.4f}s")
+            log_message(f"AGENT:{agent_program.__name__}\tRUN:{run}/{args.runs}\tSTEPS:{args.steps}\tRESULT:{'WIN' if GAME_WON else 'LOSE'}\tPERFORMANCE:{agent.performance:5}\t\tTIME:{elapsed_time:.4f}s")
 
-            # Remove the agent from the environment
-            env.delete_thing(agent)
+            # Remove the agent from the environment if it's still in the environment
+            if agent in env.things:
+                env.delete_thing(agent)
 
             # Reset the global variable GAME_WON for the next run
             GAME_WON = False
 
         # Print summary statistics for this agent
-        avg_performance = total_performance / runs
-        win_rate = (wins / runs) * 100
-        print(f"\nSummary for {agent_program.__name__}:")
-        print(f"Average Performance: {avg_performance:.2f}")
-        print(f"Win Rate: {win_rate:.2f}% ({wins}/{runs})")
+        avg_performance = total_performance / args.runs
+        win_rate = (wins / args.runs) * 100
+        print(f"\nSummary for [{agent_program.__name__:30}]: Average Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({wins}/{args.runs})")
 
 
 def searching_your_world():
@@ -373,6 +615,20 @@ def searching_your_world():
 
 
 if __name__ == "__main__":
-    print("Use -h or --help to see all available command line options")
-    building_your_world(args.steps, args.runs)
+
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='A1_COMP9016_Nagle_JohnPaul_R00065426')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Print detailed movement and agent information')
+    parser.add_argument('-s', '--steps', type=int, required=True,
+                        help='Number of steps per run to attempt to win the game (mandatory)')
+    parser.add_argument('-r', '--runs', type=int, required=True,
+                        help='Number of times to run each agent (mandatory)')
+    parser.add_argument('-w', '--width', type=int, required=True,
+                        help='Width of the grid world (mandatory)')
+    parser.add_argument('-d', '--depth', type=int, required=True,
+                        help='depth of the grid world (mandatory)')
+    args = parser.parse_args()
+
+    building_your_world()
     searching_your_world()
