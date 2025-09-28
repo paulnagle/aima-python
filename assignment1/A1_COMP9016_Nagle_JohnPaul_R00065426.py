@@ -74,27 +74,24 @@ GAME_WON=False
 
 # Define custom destination blocks
 class PositiveDestination(Thing):
-    """A destination that awards 100 points and wins the game when an agent reaches it"""
+    """ A destination that awards 100 points and wins the game when an agent reaches it """
     pass
 
 
 class NegativeDestination(Thing):
-    """A destination that penalises 50 points when an agent reaches it"""
+    """ A destination that penalises 50 points when an agent reaches it """
     pass
 
 
 class GridWorldEnvironment(XYEnvironment):
-    ''' This environment has a grid of rows and columns with obstacles '''
-
+    """ This environment has a grid of rows and columns with obstacles """
     def __init__(self, width, height):
         super().__init__()
         self.width = width
         self.height = height
 
     def get_agent_percepts(self, agent, env):
-        """
-        Returns the available moves for an agent in the given environment.
-        """
+        """ Returns the available moves for an agent in the given environment. """
         x, y = agent.location
 
         # A list of positions of all obstacles in the environment
@@ -109,7 +106,7 @@ class GridWorldEnvironment(XYEnvironment):
         """ In this environment, a percept is a list of available movements from the agent's current location,
             based on the grid size and location of any obstacles in the environment, and the cost of moving to the
             new location.
-            The movement directions could be 'up', 'down', 'left', or 'right'."""
+            The movement directions could be 'up', 'down', 'left', or 'right'. """
         x, y = agent.location
         obstacle_positions = [(thing.location[0], thing.location[1])
                              for thing in self.things 
@@ -119,9 +116,8 @@ class GridWorldEnvironment(XYEnvironment):
         return available_moves_with_costs
 
     def get_available_moves(self, x, y, width, height, obstacles=None):
-        """
-        Returns a list of available directions (up, down, left, right) that an agent can move
-        based on its current position, grid boundaries and obstacles """
+        """ Returns a list of available directions (up, down, left, right) that an agent can move
+            based on its current position, grid boundaries and obstacles """
 
         if obstacles is None:
             obstacles = []
@@ -200,25 +196,22 @@ class GridWorldEnvironment(XYEnvironment):
                 print(f"😭 You have reached the penalty destination!             : Performance penalty:   50  Performance Total: {agent.performance:4}")
 
     def is_done(self):
-        """The environment is done if the agent has won the game or if no agents are alive."""
+        """ The environment is done if the agent has won the game or if no agents are alive. """
         global GAME_WON
         return GAME_WON or super().is_done()
 
 
 class ReflexAgent(Agent):
-    """A reflex agent that always moves to the cheapest adjacent square. 
-       This agent doesnt care about the percept list. """
+    """ A reflex agent that always moves to the cheapest adjacent square. 
+        This agent doesnt care about the percept list. """
 
     def __init__(self):
         super().__init__(self.cheapest_move)
 
     def cheapest_move(self, percept):
-        """
-        Takes a percept (list of available moves with costs) and returns
-        the direction with the lowest cost.
-
-        Each move in percept is a tuple of (direction, cost)
-        """
+        """ Takes a percept (list of available moves with costs) and returns
+            the direction with the lowest cost. Each move in percept is a tuple 
+            of (direction, cost) """
         if not percept:
             return None  # No moves available
 
@@ -230,18 +223,21 @@ class ReflexAgent(Agent):
 
 
 class RandomAgent(Agent):
-    """A simple agent program that moves randomly. The agent does receive a percept, but ignores it, as it is a random agent.
-       The agent returns a random action """
-    def __init__(self): 
+    """ A simple agent program that moves randomly. The agent does receive a percept, 
+        but ignores it, as it is a random agent. The agent returns a random action """
+    def __init__(self):
         super().__init__(self.random_move)
 
     def random_move(self, percept):
+        """ This function takes a percept and returns a random move """
         return random.choice(['down', 'left', 'up', 'right'])
 
 
 # Create and set up the environment
 def create_gridworld_environment(width, height):
-
+    """ Create a 2D grid world environment with the specified width and height.
+        The environment is represented as a 2D list of cells, where each cell can be either
+        a wall, a negative destination (penalty block), or a positive destination (winning block)."""
     # Create the 2D grid world with the set width and height
     env = GridWorldEnvironment(width, height)
 
@@ -288,60 +284,60 @@ def building_your_world(steps, runs):
 
     # Generate and run the environment for {steps} steps with a list of agents
     agent_list = [RandomAgent().random_move, ReflexAgent().cheapest_move]
-    
+
     for agent_program in agent_list:
         print("")
         print("********************************************************")
         print(f"* Agent: {agent_program.__name__:45} *")
         print("********************************************************")
-        
+
         # Statistics for this agent across all runs
         total_performance = 0
         wins = 0
-        
+
         # Run the agent the specified number of times
         for run in range(1, runs + 1):
             # Create a new environment for each run
             width, height = 10, 10
             env, occupied_positions = create_gridworld_environment(width, height)
-            
+
             if args.verbose:
                 print(f"\nRun {run} of {runs}")
-            
+
             # Create a new agent
             agent = Agent(agent_program)
-            
+
             # Generate random position for agent that doesn't overlap with other objects
             while True:
                 random_position = (random.randint(0, width - 1), random.randint(0, height - 1))
                 if random_position not in occupied_positions:
                     break
-            
+
             # Add the agent to the environment
             env.add_thing(agent, random_position)
             if args.verbose:
                 print(f"Starting position is {random_position}")
-            
+
             # Run the simulation and measure time
             start_time = time.time()
             env.run(steps)
             end_time = time.time()
             elapsed_time = end_time - start_time
-            
+
             # Update statistics
             total_performance += env.agents[0].performance
             if GAME_WON:
                 wins += 1
-                
+
             # Print results for this run
             print(f"AGENT:{agent_program.__name__}\tRUN:{run}/{runs}\tSTEPS:{steps}\tRESULT:{'WIN' if GAME_WON else 'LOST'}\tPERFORMANCE:{env.agents[0].performance:5}\t\tTIME:{elapsed_time:.4f}s")
-            
+
             # Remove the agent from the environment
             env.delete_thing(agent)
-            
+
             # Reset the global variable GAME_WON for the next run
             GAME_WON = False
-        
+
         # Print summary statistics for this agent
         avg_performance = total_performance / runs
         win_rate = (wins / runs) * 100
