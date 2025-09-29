@@ -94,20 +94,6 @@ class GridWorldEnvironment(XYEnvironment):
         self.width = width
         self.depth = depth
 
-    def get_agent_percepts(self, agent, env):
-        """ Returns the available moves for an agent in the given environment. """
-        x, y = agent.location
-
-        # A list of positions of all obstacles in the environment
-        obstacle_positions = []
-        for thing in env.things:
-            if isinstance(thing, Obstacle):
-                # Safely get location if it exists
-                if hasattr(thing, 'location') and thing.location is not None:
-                    obstacle_positions.append(thing.location)
-
-        return self.get_available_moves(x, y, env.width, env.depth, obstacle_positions)
-
     def percept(self, agent):
         """ In this environment, a percept is a list of available movements from the agent's current location,
             based on the grid size and location of any obstacles in the environment, and the cost of moving to the
@@ -121,10 +107,10 @@ class GridWorldEnvironment(XYEnvironment):
                 if hasattr(thing, 'location') and thing.location is not None:
                     obstacle_positions.append(thing.location)
 
-        available_moves_with_costs = self.get_available_moves(x, y, self.width, self.depth, obstacle_positions)
+        available_moves_with_costs = self.get_available_moves_with_costs(x, y, self.width, self.depth, obstacle_positions)
         return available_moves_with_costs
 
-    def get_available_moves(self, x, y, width, depth, obstacles=None):
+    def get_available_moves_with_costs(self, x, y, width, depth, obstacles=None):
         """ Returns a list of available directions (up, down, left, right) that an agent can move
             based on its current position, grid boundaries and obstacles """
 
@@ -184,7 +170,7 @@ class GridWorldEnvironment(XYEnvironment):
 
     def _is_valid_move(self, agent, action, obstacle_positions):
         """Check if the action is valid for the agent's current position."""
-        available_moves = self.get_available_moves(
+        available_moves = self.get_available_moves_with_costs(
             agent.location[0],
             agent.location[1],
             self.width,
@@ -268,7 +254,6 @@ class ModelBasedReflexAgent(Agent):
             'last_performance': 0,                # Last known performance value
             'last_position': None,                # Last position of the agent
             'move_history': [],                   # History of moves to avoid loops
-            'exploration_mode': True,             # Start in exploration mode
         }
 
         # Initialize state and action
@@ -321,10 +306,10 @@ class ModelBasedReflexAgent(Agent):
             if action in direction_to_coords:
                 dx, dy = direction_to_coords[action]
                 state['location'] = (x + dx, y + dy)
-            
+
             # Update performance in state
             state['performance'] = self.performance
-            
+
             # Check for significant performance changes
             perf_change = state['performance'] - self.model['last_performance']
 
@@ -332,8 +317,6 @@ class ModelBasedReflexAgent(Agent):
             expected_cost = state['location'][0] + state['location'][1]
             if perf_change < -expected_cost - 10:  # Significant penalty (more than just move cost)
                 self.model['negative_dest'] = state['location']
-                # If we found a penalty block, switch to exploration mode
-                self.model['exploration_mode'] = True
 
         # Add current location to visited positions
         self.model['visited'].add(state['location'])
