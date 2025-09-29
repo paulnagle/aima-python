@@ -375,7 +375,7 @@ class ModelBasedReflexAgent(Agent):
                     if direction in direction_to_coords:
                         dx, dy = direction_to_coords[direction]
                         new_pos = (x + dx, y + dy)
-                        
+
                         if new_pos != (neg_x, neg_y):
                             safe_moves.append(move)
 
@@ -387,8 +387,7 @@ class ModelBasedReflexAgent(Agent):
         if len(self.model['move_history']) >= 4:
             # Check for simple loops like up-down-up-down or left-right-left-right
             last_moves = self.model['move_history'][-4:]
-            if (last_moves[0] == last_moves[2] and last_moves[1] == last_moves[3] and
-                    self.opposite_direction(last_moves[0]) == last_moves[1]):
+            if (last_moves[0] == last_moves[2] and last_moves[1] == last_moves[3] and self.opposite_direction(last_moves[0]) == last_moves[1]):
                 # We're in a loop, try to break out by choosing a different move
                 loop_moves = {last_moves[0], last_moves[1]}
                 non_loop_moves = [move for move in percept if move[0] not in loop_moves]
@@ -407,7 +406,7 @@ class ModelBasedReflexAgent(Agent):
                 if direction in direction_to_coords:
                     dx, dy = direction_to_coords[direction]
                     new_pos = (x + dx, y + dy)
-                    
+
                     # Check if the new position is unvisited
                     if new_pos not in self.model['visited']:
                         unvisited_moves.append(move)
@@ -476,6 +475,7 @@ def create_gridworld_environment(width, depth):
 
 
 def building_your_world():
+    """ This function is used to build the world for the agent to explore."""
     global GAME_WON
 
     # Generate and run the environment for {steps} steps with a list of agents
@@ -488,8 +488,10 @@ def building_your_world():
         log_message("********************************************************")
 
         # Statistics for this agent across all runs
-        total_performance = 0
-        wins = 0
+        agent_stats = {
+            'total_performance': 0,
+            'wins': 0
+        }
 
         # Create a new environment for the set of runs per agent type
         env, occupied_positions = create_gridworld_environment(args.width, args.depth)
@@ -517,10 +519,10 @@ def building_your_world():
             end_time = time.time()
             elapsed_time = end_time - start_time
 
-            # Update statistics
-            total_performance += agent.performance  # Store performance before deletion
+            # Update statistics using the dictionary
+            agent_stats['total_performance'] += agent.performance  # Store performance before deletion
             if GAME_WON:
-                wins += 1
+                agent_stats['wins'] += 1
 
             # Print results for this run
             log_message(f"AGENT:{agent_program.__name__}\tRUN:{run}/{args.runs}\tSTEPS:{args.steps}\tRESULT:{'WIN' if GAME_WON else 'LOSE'}\tPERFORMANCE:{agent.performance:5}\t\tTIME:{elapsed_time:.4f}s")
@@ -533,9 +535,9 @@ def building_your_world():
             GAME_WON = False
 
         # Print summary statistics for this agent
-        avg_performance = total_performance / args.runs
-        win_rate = (wins / args.runs) * 100
-        print(f"\nSummary for [{agent_program.__name__:30}]: Average Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({wins}/{args.runs})")
+        avg_performance = agent_stats['total_performance'] / args.runs
+        win_rate = (agent_stats['wins'] / args.runs) * 100
+        print(f"\nSummary for [{agent_program.__name__:30}]: Average Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({agent_stats['wins']}/{args.runs})")
 
 
 def searching_your_world():
