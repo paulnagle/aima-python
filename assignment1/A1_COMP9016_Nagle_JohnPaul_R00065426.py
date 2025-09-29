@@ -111,8 +111,9 @@ class GridWorldEnvironment(XYEnvironment):
         return available_moves_with_costs
 
     def get_available_moves_with_costs(self, x, y, width, depth, obstacles=None):
-        """ Returns a list of available directions (up, down, left, right) that an agent can move
-            based on its current position, grid boundaries and obstacles """
+        """ Returns a list of tuples containing available directions (up, down, left, right) that an 
+            agent can move based on its current position, grid boundaries and obstacles, and the associated
+            cost of that movement """
 
         if obstacles is None:
             obstacles = []
@@ -259,7 +260,7 @@ class ModelBasedReflexAgent(Agent):
         # Initialize state and action
         self.state = None
         self.action = None
-    
+
     def model_based_reflex_agent(self, percept):
         """The model-based reflex agent program."""
         # Initialize state if first call
