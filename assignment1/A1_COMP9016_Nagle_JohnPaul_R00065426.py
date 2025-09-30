@@ -61,7 +61,8 @@ from zoneinfo import available_timezones
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 # Add the parent directory to sys.path
-sys.path.append(parent_dir)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
 
 # Now you can import a module from the parent directory
 from agents4e import Thing, XYEnvironment, Agent, Obstacle
