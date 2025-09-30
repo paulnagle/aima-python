@@ -82,10 +82,9 @@ def log_message(message):
 # Based on https://stackoverflow.com/questions/61626953/python-printing-an-ascii-cartesian-coordinate-grid-from-a-2d-array-of-position
 def draw_grid(agent, obstacle, positive, negative):
     # Just for reference, draw the grid with the agent, obstacles, winning and penalty squares marked
-    print(f"\nA = Agent at {agent}, P = Winning Square at {positive} , N = Penalty Square at {negative}, O = Obstacle at {obstacle}\n")
-    rows = args.depth
-    cols = args.width
-
+    print("\nA=Agent, P=Winning Square, N=Penalty Square, O=Obstacle\n")
+    rows = args.width
+    cols = args.depth
     content = [["."]*cols for _ in range(rows)]
 
     grid = [
