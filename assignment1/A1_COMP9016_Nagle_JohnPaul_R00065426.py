@@ -58,7 +58,7 @@ from zoneinfo import available_timezones
 
 
 # Get the parent directory of the current directory
-parent_dir = os.path.dirname(os.getcwd())
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 # Add the parent directory to sys.path
 sys.path.append(parent_dir)
