@@ -66,7 +66,7 @@ if parent_dir not in sys.path:
 
 # Now you can import a module from the parent directory
 from agents4e import Thing, XYEnvironment, Agent, Obstacle
-from search import Node, Problem, best_first_graph_search, breadth_first_graph_search, depth_first_graph_search, uniform_cost_search, greedy_best_first_graph_search, astar_search, recursive_best_first_search
+from search import Node, Problem, breadth_first_graph_search, depth_first_graph_search, uniform_cost_search, greedy_best_first_graph_search, astar_search, recursive_best_first_search
 from utils4e import PriorityQueue, memoize
 
 GAME_WON=False
