@@ -241,7 +241,7 @@ class RandomAgent(Agent):
         return random.choice(['down', 'left', 'up', 'right'])
 
 class ReflexAgent(Agent):
-    # """ A reflex agent that always moves to the cheapest adjacent square
+    # A reflex agent that always moves to the cheapest adjacent square
     def __init__(self):
         super().__init__(self.cheapest_move)
 
@@ -251,7 +251,7 @@ class ReflexAgent(Agent):
         return cheapest[0]
 
 class TableDrivenAgent(Agent):
-    # """ A table driven agent that uses a pre-calculated table to determine the best action to take.
+    # A table driven agent that uses a pre-calculated table to determine the best action to take.
     def __init__(self):
         super().__init__(self.table_action)
 
