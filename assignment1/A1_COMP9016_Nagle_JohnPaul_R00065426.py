@@ -47,15 +47,11 @@ INFORMED SEARCHES:
 - Recursive Best First Search
 
 """
-
 import sys
 import os
 import random
 import argparse
 import time
-from zoneinfo import available_timezones
-
-
 
 # Get the parent directory of the current directory
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -82,7 +78,6 @@ def log_message(message):
     """Log a message if verbose mode is enabled."""
     if args.verbose:
         print(message)
-
 
 # Based on https://stackoverflow.com/questions/61626953/python-printing-an-ascii-cartesian-coordinate-grid-from-a-2d-array-of-position
 def draw_grid(agent, obstacle, positive, negative):
@@ -124,16 +119,13 @@ def draw_grid(agent, obstacle, positive, negative):
         print(line)
     print(frameLine)
 
-
 class PositiveDestination(Thing):
     """ A destination that awards 100 points and wins the game when an agent reaches it """
     pass
 
-
 class NegativeDestination(Thing):
     """ A destination that penalises 50 points when an agent reaches it """
     pass
-
 
 class GridWorldEnvironment(XYEnvironment):
     """ This environment has a grid of rows and columns with obstacles """
@@ -240,7 +232,6 @@ class GridWorldEnvironment(XYEnvironment):
         global GAME_WON
         return GAME_WON or super().is_done()
 
-
 class RandomAgent(Agent):
     # A simple agent program that moves randomly.
     def __init__(self):
@@ -248,7 +239,6 @@ class RandomAgent(Agent):
 
     def random_move(self, percept):
         return random.choice(['down', 'left', 'up', 'right'])
-
 
 class ReflexAgent(Agent):
     # """ A reflex agent that always moves to the cheapest adjacent square
@@ -259,7 +249,6 @@ class ReflexAgent(Agent):
         # returns the move with the lowest cost
         cheapest = min(percept, key=lambda x: x[1])
         return cheapest[0]
-
 
 class TableDrivenAgent(Agent):
     # """ A table driven agent that uses a pre-calculated table to determine the best action to take.
@@ -297,7 +286,6 @@ class TableDrivenAgent(Agent):
         }
 
         return self._get_preferred_move(agent_table, available_moves)
-
 
 def generate_random_starting_positions(width, depth):
     # Generate random positions for obstacle, positive destination, negative destination, and the agent.
@@ -337,7 +325,6 @@ def generate_random_starting_positions(width, depth):
 
     return (obstacle_x, obstacle_y), (pos_x, pos_y), (neg_x, neg_y), (agent_x, agent_y), occupied_positions
 
-
 # Create and set up the environment
 def create_gridworld_environment(width, depth, obstacle_pos, positive_pos, negative_pos):
     # Create the 2D grid world with the set width and depth, and Things located at the specified positions
@@ -347,7 +334,6 @@ def create_gridworld_environment(width, depth, obstacle_pos, positive_pos, negat
     env.add_thing(NegativeDestination(), negative_pos)
 
     return env
-
 
 # Search
 class GridSearchProblem(Problem):
@@ -393,14 +379,12 @@ class GridSearchProblem(Problem):
         """Cost is the sum of x and y coordinates of the destination."""
         return c + state2[0] + state2[1]
 
-
 class GridSearchProblemWithHeuristic(GridSearchProblem):
     def h(self, node):
         """Manhattan distance heuristic from current node to goal."""
         x1, y1 = node.state
         x2, y2 = self.goal
         return abs(x2 - x1) + abs(y2 - y1)
-
 
 def building_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos):
     """ This function is used to build the world for the agent to explore."""
@@ -460,7 +444,6 @@ def building_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos):
         print(f"=> {agent_program.__name__:20}:  Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({agent_stats['wins']}/{args.runs})")
         # print(f"\nSummary for [{agent_program.__name__:30}]: Average Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({agent_stats['wins']}/{args.runs})")
 
-
 def searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos):
     problem = GridSearchProblem(
         initial=agent_pos,
@@ -500,7 +483,6 @@ def searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos):
         print(f"=> Greedy:  Cost: {solution_greedy.path_cost:5} Solution: {solution_greedy.solution()}")
     else:
         print("=> Greedy:  No solution found")
-
 
 if __name__ == "__main__":
 
