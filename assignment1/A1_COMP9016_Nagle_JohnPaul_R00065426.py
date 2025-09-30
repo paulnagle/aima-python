@@ -82,9 +82,10 @@ def log_message(message):
 # Based on https://stackoverflow.com/questions/61626953/python-printing-an-ascii-cartesian-coordinate-grid-from-a-2d-array-of-position
 def draw_grid(agent, obstacle, positive, negative):
     # Just for reference, draw the grid with the agent, obstacles, winning and penalty squares marked
-    print("\nA = Agent, P = Winning Square, N = Penalty Square, O = Obstacle\n")
-    rows = args.width
-    cols = args.depth
+    print(f"\nA = Agent at {agent}, P = Winning Square at {positive} , N = Penalty Square at {negative}, O = Obstacle at {obstacle}\n")
+    rows = args.depth
+    cols = args.width
+
     content = [["."]*cols for _ in range(rows)]
 
     grid = [
@@ -486,12 +487,12 @@ def searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos):
 
 if __name__ == "__main__":
 
-    print("\nFYI: Pass the -h parameter to see details on how to configure the run")
+    print("\n*** Pass the -h parameter to see details on how to configure the run ***")
     # command line arguments
     parser = argparse.ArgumentParser(description='A1_COMP9016_Nagle_JohnPaul_R00065426')
     parser.add_argument('-v', '--verbose', action='store_true', help='Print detailed movement and agent information')
-    parser.add_argument('-s', '--steps', type=int, nargs='?', const=1, default=25, help='Number of Agent steps per run to attempt to win the game (agent only)')
-    parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=25, help='Number of times to run each Agent (agent only)')
+    parser.add_argument('-s', '--steps', type=int, nargs='?', const=1, default=40, help='Number of Agent steps per run to attempt to win the game (agent only)')
+    parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=500, help='Number of times to run each Agent (agent only)')
     parser.add_argument('-w', '--width', type=int, nargs='?', const=1, default=10, help='Width of the grid world')
     parser.add_argument('-d', '--depth', type=int, nargs='?', const=1, default=10, help='depth of the grid world')
     args = parser.parse_args()
