@@ -1,4 +1,9 @@
-""" Paul Nagle R00065426 Knowledge Representation Lab 4 """
+"""
+Student Name   : Paul Nagle
+Student Number : R00065426
+Module         : Knowledge Representation
+Lab Number     :  4
+"""
 import sys
 import os
 import random
@@ -61,22 +66,25 @@ class VacuumProblem(Problem):
         return possible_actions
 
     def result(self, state, action):
-        x, y = state[0]
-        position = (x, y)
+        agent_pos, dirt_positions = state
+        x, y = agent_pos
+        new_dirt_positions = list(dirt_positions)
+        
         if action == 'Up':
-            state[0] = (x, y + 1)
+            new_agent_pos = (x, y + 1)
         elif action == 'Down':
-            state[0] = (x, y - 1)
+            new_agent_pos = (x, y - 1)
         elif action == 'Left':
-            state[0] = (x - 1, y)
+            new_agent_pos = (x - 1, y)
         elif action == 'Right':
-            state[0] = (x + 1, y)
+            new_agent_pos = (x + 1, y)
         elif action == 'Suck':
-            if position in state[1]:
-                state[1].remove((x, y))
+            new_agent_pos = (x, y)
+            if (x, y) in new_dirt_positions:
+                new_dirt_positions.remove((x, y))
         else:
             raise ValueError(f"Unknown action: {action}")
-        return state
+        return (new_agent_pos, tuple(new_dirt_positions))
 
     def goal_test(self, state):
         if not state[1]:
@@ -86,18 +94,17 @@ class VacuumProblem(Problem):
 
     def path_cost(self, c, state1, action, state2):
         if action in ['Up', 'Down', 'Left', 'Right']:
-            return 1
+            return c + 1
         if action in ['Suck']:
-            return 100
+            return c + 100
 
 
 def get_initial_state_from_env(agent_position, env):
-    return (agent_position, env.dirt_positions)
+    return (agent_position, tuple(env.dirt_positions))
 
 
 if __name__ == "__main__":
-    print("Hello")
-    width = height = 8
+    width = height = 3
     agent_position = (0, 0)
     env = RandomDirtVacuumEnvironment(width, height)
     env.populate_with_dirt()
@@ -106,4 +113,17 @@ if __name__ == "__main__":
     initial_state = get_initial_state_from_env(agent_position, env)
     my_problem = VacuumProblem(initial_state, width, height)
     solution_bfgs = breadth_first_graph_search(my_problem)
-    print(solution_bfgs)
+
+    if solution_bfgs is not None:
+        solution_path = solution_bfgs.path()
+        print("\nSequence of Actions:\n")
+        for node in solution_path:
+            print(f" => Location of agent            : {node.state[0]}")
+            print(f" => Action taken by agent        : {node.action}")
+            print(f" => State i.e. squares with dirt : {node.state[1]}")
+            print("")
+
+        print(f"\nOverall Solution      : {solution_bfgs.solution()}\n")
+        print(f"\nOverall Solution Cost : {solution_bfgs.path_cost}\n")
+    else:
+        print("\nNo Solution Found\n")
