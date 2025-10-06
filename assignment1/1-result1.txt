@@ -1,0 +1,2550 @@
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . W . . |
+1 | . . P . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . O . . . . . . . |
+5 | . . . . . . . . A . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -384.72 Win Rate: 16.80% (84/500)
+=> cheapest_move       :  Performance: 43.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: 43.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . W O . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . P . |
+8 | . . . . . . . . . . |
+9 | . . . A . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -367.40 Win Rate: 4.40% (22/500)
+=> cheapest_move       :  Performance: -80.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -80.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . P . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . O . . . . . |
+5 | A . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . W . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -250.48 Win Rate: 10.60% (53/500)
+=> cheapest_move       :  Performance: -28.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -28.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . P . . . . . . . O |
+1 | . . A . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . W . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -239.06 Win Rate: 5.20% (26/500)
+=> cheapest_move       :  Performance: -72.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -1022.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . A . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . O . . P . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . W |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -165.79 Win Rate: 1.00% (5/500)
+=> cheapest_move       :  Performance: -20.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -20.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | O . . . . . W . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . P . . . . . A . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -404.20 Win Rate: 24.00% (120/500)
+=> cheapest_move       :  Performance: -148.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -148.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . P . W |
+1 | . . . . . . . A . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | O . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -246.60 Win Rate: 37.20% (186/500)
+=> cheapest_move       :  Performance: -94.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -94.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | O . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . A W . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . P . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -108.54 Win Rate: 60.20% (301/500)
+=> cheapest_move       :  Performance: -44.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -44.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . A . . . . . . W . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . P . . . O . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -201.32 Win Rate: 6.80% (34/500)
+=> cheapest_move       :  Performance: -22.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -22.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . O . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . P . . . . |
+4 | . . . A . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . W . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -295.30 Win Rate: 7.60% (38/500)
+=> cheapest_move       :  Performance: -38.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -38.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | A . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . W . . . . |
+5 | . . . . . . . . O . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | P . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -121.55 Win Rate: 11.60% (58/500)
+=> cheapest_move       :  Performance: -20.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -20.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | P . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . A . . . . . . |
+5 | . W . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | O . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -199.68 Win Rate: 34.80% (174/500)
+=> cheapest_move       :  Performance: -888.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -888.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . O . . . |
+3 | . . . . W . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . P . . . . |
+8 | A . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -299.06 Win Rate: 10.00% (50/500)
+=> cheapest_move       :  Performance: -44.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -44.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | P . . . . . . . . . |
+1 | . . . . W . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . O . . . . . . |
+4 | . . . . . . . . . . |
+5 | A . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -241.88 Win Rate: 12.00% (60/500)
+=> cheapest_move       :  Performance: -928.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -928.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . O . . . . . |
+5 | . . . . . . . . A . |
+6 | . . . . . . . W P . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -252.17 Win Rate: 51.60% (258/500)
+=> cheapest_move       :  Performance: -92.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -92.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . O . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . W . . . P . |
+9 | . . . . . . . A . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -423.29 Win Rate: 33.20% (166/500)
+=> cheapest_move       :  Performance: -132.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -132.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . A . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . P . . |
+4 | . . . . . . . . . . |
+5 | . . . . W . . . . . |
+6 | . . . . . . . . O . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -273.54 Win Rate: 14.20% (71/500)
+=> cheapest_move       :  Performance: -32.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -32.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . W |
+1 | . . . O . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . A . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . P |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -371.75 Win Rate: 5.40% (27/500)
+=> cheapest_move       :  Performance: -60.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -60.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . O . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . P . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . W |
+7 | . . . . . . . A . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -324.96 Win Rate: 35.20% (176/500)
+=> cheapest_move       :  Performance: -318.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -318.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | P . . . . . . . . . |
+1 | . . . A . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . W |
+8 | . . . O . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -232.57 Win Rate: 1.20% (6/500)
+=> cheapest_move       :  Performance: -974.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -974.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . W . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . A . . . . |
+3 | O . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . P . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -202.46 Win Rate: 34.60% (173/500)
+=> cheapest_move       :  Performance: -38.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -38.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | A . P . . . . . O . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . W . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -161.26 Win Rate: 29.00% (145/500)
+=> cheapest_move       :  Performance: -20.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -20.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . A . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . P . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . O . . . . . W |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -238.73 Win Rate: 3.20% (16/500)
+=> cheapest_move       :  Performance: -24.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -24.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . W |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . A . |
+7 | . . . . . . . . . . |
+8 | . . . . P O . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -405.07 Win Rate: 18.20% (91/500)
+=> cheapest_move       :  Performance: -104.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -104.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . A . . . . |
+1 | . . . . . W . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . P . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . O . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -20.07 Win Rate: 73.20% (366/500)
+=> cheapest_move       :  Performance: -28.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -28.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . P . . . |
+7 | . . . A . . . . . . |
+8 | . . . . . . . . . . |
+9 | W . . . . O . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -318.18 Win Rate: 18.40% (92/500)
+=> cheapest_move       :  Performance: -60.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -60.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . P . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . O . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | W . . . . A . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -344.35 Win Rate: 11.20% (56/500)
+=> cheapest_move       :  Performance: -110.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -110.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . O . . . . |
+3 | . . . . . . . P . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . W . A . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -239.58 Win Rate: 38.00% (190/500)
+=> cheapest_move       :  Performance: -52.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -52.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . P . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . A . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . W . . O . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -244.16 Win Rate: 25.80% (129/500)
+=> cheapest_move       :  Performance: -52.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -52.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . W . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . O . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . P |
+9 | . A . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -306.30 Win Rate: 1.20% (6/500)
+=> cheapest_move       :  Performance: -60.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -60.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . P . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . W . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . A . . . . . . |
+9 | . . . . . O . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -338.49 Win Rate: 4.20% (21/500)
+=> cheapest_move       :  Performance: -70.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -70.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . O . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . W . . . . . |
+7 | . . . . . . . . . P |
+8 | . . . A . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -261.66 Win Rate: 36.20% (181/500)
+=> cheapest_move       :  Performance: -70.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -70.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . O . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . A . . |
+9 | . . . . W . P . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -418.90 Win Rate: 23.40% (117/500)
+=> cheapest_move       :  Performance: -118.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -118.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . W O . . . . . P . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . A . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -483.45 Win Rate: 5.40% (27/500)
+=> cheapest_move       :  Performance: -132.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -132.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | A . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . P . . . . . . . . |
+8 | . . . . . . W . . . |
+9 | . . . . . . . . . O |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -245.04 Win Rate: 6.60% (33/500)
+=> cheapest_move       :  Performance: -24.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -24.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . O . . . . . W . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . P |
+9 | . . . . . . . . A . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -548.67 Win Rate: 4.00% (20/500)
+=> cheapest_move       :  Performance: 0.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: 0.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | O . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . W . . . . |
+7 | . . . . . . . . . . |
+8 | . A . . . . . . . . |
+9 | . . . . . . . P . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -283.08 Win Rate: 18.40% (92/500)
+=> cheapest_move       :  Performance: -52.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -52.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . P . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . W . O . . . . . . |
+6 | . . . . . A . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -367.95 Win Rate: 11.80% (59/500)
+=> cheapest_move       :  Performance: -120.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -120.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . A . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . P . . . . . . . |
+6 | . . . . . . . . . . |
+7 | W . . . . . . . O . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -328.24 Win Rate: 2.60% (13/500)
+=> cheapest_move       :  Performance: -52.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -52.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . A . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . P . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | W . . . . . . . . O |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -233.14 Win Rate: 3.80% (19/500)
+=> cheapest_move       :  Performance: -22.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -22.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . P . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . W . . . . . A . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . O . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -419.78 Win Rate: 5.80% (29/500)
+=> cheapest_move       :  Performance: -142.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -142.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . P . . |
+3 | . . . . . . . . . . |
+4 | O . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . A . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . W . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -149.65 Win Rate: 49.60% (248/500)
+=> cheapest_move       :  Performance: -44.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -44.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . O |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . P . . |
+6 | . . . . . . . . . W |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . A |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -317.43 Win Rate: 45.00% (225/500)
+=> cheapest_move       :  Performance: 52.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: 52.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . A . . . . . . . . |
+1 | . W . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . O . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . P . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: 38.90 Win Rate: 83.40% (417/500)
+=> cheapest_move       :  Performance: -20.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -20.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . W . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . O . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | P A . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -382.59 Win Rate: 4.60% (23/500)
+=> cheapest_move       :  Performance: 55.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: 55.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | O . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . W . A . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | P . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -259.05 Win Rate: 39.20% (196/500)
+=> cheapest_move       :  Performance: -70.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -70.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . W |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . A . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . O . . . . . |
+9 | . . P . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -316.88 Win Rate: 22.00% (110/500)
+=> cheapest_move       :  Performance: -70.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -70.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . O A . . . |
+8 | . . . . . . . P . . |
+9 | . . . W . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -420.23 Win Rate: 21.60% (108/500)
+=> cheapest_move       :  Performance: -92.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -92.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . W . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . O |
+4 | . . . . . . . . . . |
+5 | . . . . . . P . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . A . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -463.21 Win Rate: 0.60% (3/500)
+=> cheapest_move       :  Performance: -55.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: -55.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . P . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | W . . . . O . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . A . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -392.91 Win Rate: 8.20% (41/500)
+=> cheapest_move       :  Performance: -80.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -80.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . O . . . P . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . W . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . A |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -337.29 Win Rate: 39.60% (198/500)
+=> cheapest_move       :  Performance: -262.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -262.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . P |
+2 | . . . . . A . . . O |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . W . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -278.97 Win Rate: 9.80% (49/500)
+=> cheapest_move       :  Performance: -38.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -38.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . W |
+3 | . . A . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . P . . |
+9 | O . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -225.41 Win Rate: 5.00% (25/500)
+=> cheapest_move       :  Performance: -28.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -28.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . O . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . W . . . |
+6 | A . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . P . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -246.37 Win Rate: 10.60% (53/500)
+=> cheapest_move       :  Performance: -32.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -32.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . O . . . . . |
+2 | . . . . . . . . . . |
+3 | . . W . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . A . . . . P . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -362.62 Win Rate: 10.60% (53/500)
+=> cheapest_move       :  Performance: -80.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -80.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . W . . . . |
+1 | . P . O . . . . . . |
+2 | . . . . . . . A . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -261.50 Win Rate: 29.00% (145/500)
+=> cheapest_move       :  Performance: 74.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: 74.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . W . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . P . . . . . . . . |
+7 | A . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . O . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -327.32 Win Rate: 9.60% (48/500)
+=> cheapest_move       :  Performance: -38.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -38.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . A . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . W . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . O . . . . P . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -145.68 Win Rate: 36.60% (183/500)
+=> cheapest_move       :  Performance: -32.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -32.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | A . . . W . . . . . |
+2 | . . . . . . . . . O |
+3 | . . P . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -133.06 Win Rate: 30.00% (150/500)
+=> cheapest_move       :  Performance: -20.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -20.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . W . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | A . . . . . . . . . |
+8 | . O . . . . . . . . |
+9 | . . P . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -297.60 Win Rate: 1.40% (7/500)
+=> cheapest_move       :  Performance: -38.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -38.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . O . W . |
+6 | . . . . . . . . . . |
+7 | . P . . . . . . . . |
+8 | . . A . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -388.41 Win Rate: 4.80% (24/500)
+=> cheapest_move       :  Performance: -60.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -60.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | W . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . A . . . . |
+3 | . . P . . . . . . . |
+4 | . . O . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -280.81 Win Rate: 9.80% (49/500)
+=> cheapest_move       :  Performance: 79.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: 79.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . W . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . O . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . P . . . . . . . . |
+8 | . . A . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -403.86 Win Rate: 3.00% (15/500)
+=> cheapest_move       :  Performance: -60.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -60.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . P . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . O |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . A . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . W . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -428.05 Win Rate: 2.60% (13/500)
+=> cheapest_move       :  Performance: -142.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -142.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . W |
+3 | . . . . P . . . . . |
+4 | . . . . . . . . . . |
+5 | O . . . . . . . A . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -366.54 Win Rate: 23.00% (115/500)
+=> cheapest_move       :  Performance: -92.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -92.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . O . . |
+2 | . . . . . . . . . . |
+3 | . . . . . W . . P . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . A . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -407.28 Win Rate: 8.80% (44/500)
+=> cheapest_move       :  Performance: 37.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: 37.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . A . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . P . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . W . . . . . . |
+9 | . . . . . . . O . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -385.98 Win Rate: 3.80% (19/500)
+=> cheapest_move       :  Performance: -60.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -60.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . O . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . W . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . A . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . P . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -316.57 Win Rate: 13.60% (68/500)
+=> cheapest_move       :  Performance: -52.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -52.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . W . . . P . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . A . |
+7 | . . . . . . . . . . |
+8 | . . . . O . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -441.26 Win Rate: 3.80% (19/500)
+=> cheapest_move       :  Performance: -104.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -104.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . P . . |
+4 | . . . . . . . . . . |
+5 | . . . . W . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | A . . . . O . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -254.61 Win Rate: 19.20% (96/500)
+=> cheapest_move       :  Performance: -44.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -44.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . A . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . O . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . P W . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -237.72 Win Rate: 1.40% (7/500)
+=> cheapest_move       :  Performance: -28.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -28.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . P . . . . . |
+5 | . . . . . . . . O . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . W . . . . . . . |
+9 | . . A . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -57.04 Win Rate: 76.80% (384/500)
+=> cheapest_move       :  Performance: 90.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: 90.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . P . |
+3 | . W . . . . . . . . |
+4 | . . O . . . . . . . |
+5 | A . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -127.70 Win Rate: 47.20% (236/500)
+=> cheapest_move       :  Performance: -28.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -28.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . A . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . P W . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . O . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -108.82 Win Rate: 65.60% (328/500)
+=> cheapest_move       :  Performance: -44.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -44.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . O . . . . . A . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | W . . . . . . . P . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -301.46 Win Rate: 1.00% (5/500)
+=> cheapest_move       :  Performance: -148.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -148.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . O . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . W . . . . |
+7 | . . . . A . . P . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -227.53 Win Rate: 45.80% (229/500)
+=> cheapest_move       :  Performance: -70.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -70.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . O . . . . . W |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . P . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . A . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -322.73 Win Rate: 0.20% (1/500)
+=> cheapest_move       :  Performance: -52.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -52.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . O . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . P . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . W . . . . |
+9 | A . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -238.74 Win Rate: 24.40% (122/500)
+=> cheapest_move       :  Performance: -52.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -52.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . A . . . . . . . . |
+3 | . . . . . . . P . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . O . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . W . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -177.57 Win Rate: 4.40% (22/500)
+=> cheapest_move       :  Performance: -22.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -22.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | A . . P . . . . . . |
+2 | . . . . . W . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . O . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -160.44 Win Rate: 17.00% (85/500)
+=> cheapest_move       :  Performance: -20.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -20.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . A . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . P . . |
+7 | . . . . . . . W . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . O . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -310.24 Win Rate: 30.20% (151/500)
+=> cheapest_move       :  Performance: -80.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -80.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . P . . W . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | A . . . . . O . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -269.23 Win Rate: 4.80% (24/500)
+=> cheapest_move       :  Performance: -32.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -32.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | O . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | P . . . . . . . . . |
+7 | W . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . A . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -248.14 Win Rate: 38.40% (192/500)
+=> cheapest_move       :  Performance: -70.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -70.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . P . |
+2 | . . . . . . . . . . |
+3 | . . A . . . . . . . |
+4 | . . . . . . . . . . |
+5 | W . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . O . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -178.28 Win Rate: 25.60% (128/500)
+=> cheapest_move       :  Performance: -28.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -28.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . W . |
+1 | . . . . . . . . . . |
+2 | . . . . . . P . . . |
+3 | . . . O . . A . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -327.20 Win Rate: 22.80% (114/500)
+=> cheapest_move       :  Performance: -102.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -102.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | W . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . A . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . O |
+8 | P . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -165.04 Win Rate: 25.60% (128/500)
+=> cheapest_move       :  Performance: 94.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: 94.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . O . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . W . . . . A |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . P . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -431.52 Win Rate: 13.20% (66/500)
+=> cheapest_move       :  Performance: -190.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -190.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . P . . A |
+8 | . O . . . . . . . W |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -162.69 Win Rate: 62.80% (314/500)
+=> cheapest_move       :  Performance: -132.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -132.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . O . . . . |
+1 | P . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . W . A |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -203.66 Win Rate: 53.60% (268/500)
+=> cheapest_move       :  Performance: -278.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -278.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . W . . . . . . . . |
+2 | . . P . . . O . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . A . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -366.18 Win Rate: 9.00% (45/500)
+=> cheapest_move       :  Performance: -60.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -60.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . W . . . . |
+4 | . . . P . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . O . |
+8 | A . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -302.27 Win Rate: 8.40% (42/500)
+=> cheapest_move       :  Performance: -44.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -44.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . O . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | P . . . . . . . . . |
+9 | W A . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -109.90 Win Rate: 65.40% (327/500)
+=> cheapest_move       :  Performance: -60.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -60.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . O . . . . |
+1 | . . . . . . . . P . |
+2 | . . . . A . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . W . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -263.98 Win Rate: 4.80% (24/500)
+=> cheapest_move       :  Performance: -32.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -32.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . A . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | P . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . W . . . . . . |
+8 | . . . . . . . . . . |
+9 | O . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -298.03 Win Rate: 3.60% (18/500)
+=> cheapest_move       :  Performance: -44.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -44.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | A . . . O . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . W . . . . . . . |
+8 | . . . . . P . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -130.56 Win Rate: 9.80% (49/500)
+=> cheapest_move       :  Performance: -20.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -20.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . A . . . |
+6 | . . . . . . W . P . |
+7 | . . . . . . . . . . |
+8 | O . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -176.39 Win Rate: 52.00% (260/500)
+=> cheapest_move       :  Performance: -70.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -70.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | O . . P . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . W |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . A . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -404.98 Win Rate: 15.80% (79/500)
+=> cheapest_move       :  Performance: -182.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -182.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . W . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . P . O . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . A . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -344.52 Win Rate: 9.40% (47/500)
+=> cheapest_move       :  Performance: 67.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: 67.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | W . . . . . . . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . O . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . P |
+8 | . . . . . . . . . . |
+9 | . . . . . . . A . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -490.33 Win Rate: 0.80% (4/500)
+=> cheapest_move       :  Performance: -20.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: -20.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . W . . . . . . . |
+1 | . . . . . . . O A . |
+2 | . . . . . . . . . . |
+3 | . . . . P . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -315.47 Win Rate: 7.00% (35/500)
+=> cheapest_move       :  Performance: 65.00 Win Rate: 100.00% (500/500)
+=> table_action        :  Performance: 65.00 Win Rate: 100.00% (500/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . O . . . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . A . . |
+4 | W . . . . . . . . . |
+5 | . . . P . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . . . . . . . |
+8 | . . . . . . . . . . |
+9 | . . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -350.04 Win Rate: 5.00% (25/500)
+=> cheapest_move       :  Performance: -302.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -302.00 Win Rate: 0.00% (0/500)
+
+CURRENT ARGUMENTS:          STEPS=> 40          RUNS=> 500          WIDTH=> 10          DEPTH=> 10
+
+*** Pass the -h parameter to see details on how to configure the arguments ***
+
+A=Agent, W=Winning Square, P=Penalty Square, O=Obstacle
+
+    0 1 2 3 4 5 6 7 8 9  
+  +---------------------+
+0 | . . . . . . . . P . |
+1 | . . . . . . . . . . |
+2 | . . . . . . . . . . |
+3 | . . . . . . . . . . |
+4 | . . . . . . . . . . |
+5 | . . . . . . . . . . |
+6 | . . . . . . . . . . |
+7 | . . . . W . . . O . |
+8 | . . . . . . . . . . |
+9 | A . . . . . . . . . |
+  +---------------------+
+
+AGENT RESULTS
+=> random_move         :  Performance: -224.67 Win Rate: 29.40% (147/500)
+=> cheapest_move       :  Performance: -52.00 Win Rate: 0.00% (0/500)
+=> table_action        :  Performance: -52.00 Win Rate: 0.00% (0/500)

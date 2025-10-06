@@ -82,7 +82,7 @@ def log_message(message):
 # Based on https://stackoverflow.com/questions/61626953/python-printing-an-ascii-cartesian-coordinate-grid-from-a-2d-array-of-position
 def draw_grid(agent, obstacle, positive, negative):
     # Just for reference, draw the grid with the agent, obstacles, winning and penalty squares marked
-    print("\nA=Agent, P=Winning Square, N=Penalty Square, O=Obstacle\n")
+    print("\nA=Agent, W=Winning Square, P=Penalty Square, O=Obstacle\n")
     rows = args.width
     cols = args.depth
     content = [["."]*cols for _ in range(rows)]
@@ -90,8 +90,8 @@ def draw_grid(agent, obstacle, positive, negative):
     grid = [
         (obstacle[0], obstacle[1], "O"),
         (agent[0], agent[1], "A"),
-        (positive[0], positive[1], "P"),
-        (negative[0], negative[1], "N")]
+        (positive[0], positive[1], "W"),
+        (negative[0], negative[1], "P")]
     for (x, y, c) in grid: content[y][x] = c
 
     # build frame
@@ -484,17 +484,27 @@ def searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos):
     else:
         print("=> Greedy:  No solution found")
 
-if __name__ == "__main__":
 
-    print("\n*** Pass the -h parameter to see details on how to configure the run ***")
+def print_args(args):
+    print("\nCURRENT ARGUMENTS:"
+          f"          STEPS=> {args.steps}"
+          f"          RUNS=> {args.runs}"
+          f"          WIDTH=> {args.width}"
+          f"          DEPTH=> {args.depth}"
+          )
+    print("\n*** Pass the -h parameter to see details on how to configure the arguments ***")
+
+if __name__ == "__main__":
     # command line arguments
     parser = argparse.ArgumentParser(description='A1_COMP9016_Nagle_JohnPaul_R00065426')
     parser.add_argument('-v', '--verbose', action='store_true', help='Print detailed movement and agent information')
-    parser.add_argument('-s', '--steps', type=int, nargs='?', const=1, default=40, help='Number of Agent steps per run to attempt to win the game (agent only)')
-    parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=500, help='Number of times to run each Agent (agent only)')
-    parser.add_argument('-w', '--width', type=int, nargs='?', const=1, default=10, help='Width of the grid world')
-    parser.add_argument('-d', '--depth', type=int, nargs='?', const=1, default=10, help='depth of the grid world')
+    parser.add_argument('-s', '--steps', type=int, nargs='?', const=1, default=40, help='Number of Agent steps per run to attempt to win the game (agent only) (DEFAULT: 40)')
+    parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=500, help='Number of times to run each Agent (agent only) (DEFAULT: 500)')
+    parser.add_argument('-w', '--width', type=int, nargs='?', const=1, default=6, help='Width of the grid world (DEFAULT: 6)')
+    parser.add_argument('-d', '--depth', type=int, nargs='?', const=1, default=6, help='depth of the grid world (DEFAULT: 6)')
     args = parser.parse_args()
+
+    print_args(args)
 
     # Generate random positions for obstacle, positive destination, and negative destination as well as an initial position for the agent
     obstacle_pos, positive_pos, negative_pos, agent_pos, occupied_positions = generate_random_starting_positions(args.width, args.depth)
@@ -502,4 +512,4 @@ if __name__ == "__main__":
     draw_grid(agent_pos, obstacle_pos, positive_pos, negative_pos)
 
     building_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
-    searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
+    # searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
