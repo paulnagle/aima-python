@@ -246,7 +246,7 @@ class ReflexAgent(Agent):
         super().__init__(self.cheapest_move)
 
     def cheapest_move(self, percept):
-        # returns the move with the lowest cost
+        # returns the move with the lowest cost, based on the percepts available
         cheapest = min(percept, key=lambda x: x[1])
         return cheapest[0]
 
@@ -512,4 +512,4 @@ if __name__ == "__main__":
     draw_grid(agent_pos, obstacle_pos, positive_pos, negative_pos)
 
     building_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
-    # searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
+    searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
