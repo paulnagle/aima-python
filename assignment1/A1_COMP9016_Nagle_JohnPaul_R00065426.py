@@ -61,9 +61,8 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 # Now you can import a module from the parent directory
-from agents4e import Thing, XYEnvironment, Agent, Obstacle
-from search import Node, Problem, breadth_first_graph_search, depth_first_graph_search, uniform_cost_search, greedy_best_first_graph_search, astar_search, recursive_best_first_search
-from utils4e import PriorityQueue, memoize
+from agents import Thing, XYEnvironment, Agent, Obstacle
+from search import Problem, breadth_first_graph_search, depth_first_graph_search, uniform_cost_search, greedy_best_first_graph_search, astar_search, recursive_best_first_search
 
 GAME_WON=False
 
@@ -181,6 +180,8 @@ class GridWorldEnvironment(XYEnvironment):
                     obstacle_positions.append(thing.location)
 
         # Check if move is valid
+        if not action:
+            return
         if not self._is_valid_move(agent, action, obstacle_positions):
             log_message(f"❌ Tried to go [{action:5}] from {agent.location}, but cant go in that direction")
             return
@@ -287,6 +288,25 @@ class TableDrivenAgent(Agent):
 
         return self._get_preferred_move(agent_table, available_moves)
 
+class GoalBasedAgent(Agent):
+    def __init__(self):
+        super().__init__(self.goalbased_action)
+
+    
+    def goalbased_action(self, percept):
+        # A goal based search, wher ethe goal is the Winning position i.e. positive_pos
+        state = self.show_state()
+        problem = GridSearchProblemWithHeuristic(
+            initial=self.location,
+            goal=positive_pos,
+            width=args.width,
+            depth=args.depth,
+            obstacles=[obstacle_pos, negative_pos]
+        )
+        star_search_result =  astar_search(problem)
+        return star_search_result.action
+
+
 def generate_random_starting_positions(width, depth):
     # Generate random positions for obstacle, positive destination, negative destination, and the agent.
     occupied_positions = []
@@ -390,7 +410,7 @@ def building_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos):
     """ This function is used to build the world for the agent to explore."""
     global GAME_WON
 
-    agent_list = [RandomAgent().random_move, ReflexAgent().cheapest_move, TableDrivenAgent().table_action]
+    agent_list = [RandomAgent().random_move, ReflexAgent().cheapest_move, TableDrivenAgent().table_action, GoalBasedAgent().goalbased_action]
 
     print("\nAGENT RESULTS")
     for agent_program in agent_list:
@@ -512,4 +532,4 @@ if __name__ == "__main__":
     draw_grid(agent_pos, obstacle_pos, positive_pos, negative_pos)
 
     building_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
-    searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
+    # searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
