@@ -47,10 +47,12 @@ INFORMED SEARCHES:
 - Recursive Best First Search
 
 """
+from operator import neg
 import sys
 import os
 import random
 import argparse
+import copy
 import time
 
 # Get the parent directory of the current directory
@@ -168,7 +170,6 @@ class GridWorldEnvironment(XYEnvironment):
         return available_moves
 
     def execute_action(self, agent, action):
-        global GAME_WON
         initial_location = agent.location
 
         # Calculate obstacle positions
@@ -286,24 +287,37 @@ class TableDrivenAgent(Agent):
             (available_moves, ('up', 'down', 'left', 'right')): 'up',
         }
 
-        return self._get_preferred_move(agent_table, available_moves)
+        preferred_move = self._get_preferred_move(agent_table, available_moves)
+        return preferred_move
 
 class GoalBasedAgent(Agent):
-    def __init__(self):
+    # GOAL is self.location == goal_location
+    def __init__(self, agent_pos, positive_pos, negative_pos, obstacle_pos):
+        self.location = agent_pos
+        self.goal_location = positive_pos
+        self.penalty_location = negative_pos
+        self.obstacle_location = obstacle_pos
+ 
         super().__init__(self.goalbased_action)
 
     
     def goalbased_action(self, percept):
-        # A goal based search, wher ethe goal is the Winning position i.e. positive_pos
-        state = self.show_state()
+        # A goal based search, where the goal is the Winning position i.e. positive_pos
+        # We will use the astar search to find the next move towards the goal
+
         problem = GridSearchProblemWithHeuristic(
             initial=self.location,
-            goal=positive_pos,
+            goal=self.goal_location,
             width=args.width,
             depth=args.depth,
-            obstacles=[obstacle_pos, negative_pos]
+            obstacles=[self.obstacle_location, self.penalty_location]
         )
-        star_search_result =  astar_search(problem)
+        star_search_result = astar_search(problem)
+        # Update state based on the action
+        if star_search_result.action in direction_to_coords:
+            dx, dy = direction_to_coords[star_search_result.action]
+            self.location = (self.location[0] + dx, self.location[1] + dy)
+        
         return star_search_result.action
 
 
@@ -329,7 +343,6 @@ def generate_random_starting_positions(width, depth):
             occupied_positions.append((neg_x, neg_y))
             break
 
-    agent_position = None
     while True:
         agent_x = random.randint(0, width - 1)
         agent_y = random.randint(0, depth - 1)
@@ -406,63 +419,147 @@ class GridSearchProblemWithHeuristic(GridSearchProblem):
         x2, y2 = self.goal
         return abs(x2 - x1) + abs(y2 - y1)
 
-def building_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos):
+def compare_agents(EnvFactory, AgentFactories, n, steps):
+    """See how well each of several agents do in n instances of an environment."""
+    envs = [EnvFactory() for i in range(n)]
+    results = [(agent, test_agent(agent, steps, copy.deepcopy(envs))) for agent in AgentFactories]
+    return results
+
+def test_agent(AgentFactory, steps, envs):
+    """Return the mean score of running an agent in each of the envs, for steps
+    """
+    def score(env):
+        global GAME_WON
+        run_stat = {}
+
+        agent = AgentFactory()
+        GAME_WON = False
+        env.add_thing(agent)
+        # Run the simulation and measure time
+        start_time = time.time()
+        env.run(steps)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+
+        run_stat['time_taken'] = elapsed_time
+        run_stat['performance'] = agent.performance
+        run_stat['game_won'] = GAME_WON
+        agent_stats.append(run_stat)
+        return agent_stats
+
+    agent_stats = []
+    for env in envs:
+        agent_stats.append(score(env))
+
+    return agent_stats
+
+def building_your_world():
     """ This function is used to build the world for the agent to explore."""
     global GAME_WON
 
-    agent_list = [RandomAgent().random_move, ReflexAgent().cheapest_move, TableDrivenAgent().table_action, GoalBasedAgent().goalbased_action]
+    # Define factories for the agents
+    def random_agent_factory():
+        agent = RandomAgent()
+        agent.__name__ = "RandomAgent"
+        return agent
 
-    print("\nAGENT RESULTS")
-    for agent_program in agent_list:
-        log_message("")
-        log_message("********************************************************")
-        log_message(f"* Agent: {agent_program.__name__:45} *")
-        log_message("********************************************************")
+    def reflex_agent_factory():
+        agent = ReflexAgent()
+        agent.__name__ = "ReflexAgent"
+        return agent
 
-        # Statistics for this agent across all runs
-        agent_stats = {
-            'total_performance': 0,
-            'wins': 0
-        }
+    def table_agent_factory():
+        agent = TableDrivenAgent()      
+        agent.__name__ = "TableDrivenAgent"
+        return agent
 
-        # Create a new environment for the set of runs per agent type
-        env = create_gridworld_environment(args.width, args.depth, obstacle_pos, positive_pos, negative_pos)
+    def goal_agent_factory():
+        obstacle_pos, positive_pos, negative_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.depth)
+        agent = GoalBasedAgent(agent_pos, positive_pos, negative_pos, obstacle_pos)
+        agent.__name__ = "GoalBasedAgent"
+        return agent
 
-        # Run the agent the specified number of times
-        for run in range(1, args.runs + 1):
-            log_message(f"\nRun {run} of {args.runs}")
+    # Define the environment factory
+    def env_factory_gridworld():
+        # Generate random positions for obstacle, positive destination, and negative destination as well as an initial position for the agent
+        obstacle_pos, positive_pos, negative_pos, _, _ = generate_random_starting_positions(args.width, args.depth)
+        # draw_grid(agent_pos, obstacle_pos, positive_pos, negative_pos)
+        return create_gridworld_environment(args.width, args.depth, obstacle_pos, positive_pos, negative_pos)
 
-            # Add an agent to the environment
-            agent = Agent(agent_program)
-            env.add_thing(agent, agent_pos)
-            log_message(f"Starting position is {agent_pos}")
+    # List of agent factories for comparison 
+    agent_factories = [
+        random_agent_factory,
+        reflex_agent_factory,
+        table_agent_factory,
+        goal_agent_factory
+    ]
 
-            # Run the simulation and measure time
-            start_time = time.time()
-            env.run(args.steps)
-            end_time = time.time()
-            elapsed_time = end_time - start_time
+    def run_agent_comparison():
+        # Run the comparison between the agents
+        results = compare_agents(env_factory_gridworld, agent_factories, n=args.runs, steps=args.steps)
 
-            # Update statistics using the dictionary
-            agent_stats['total_performance'] += agent.performance  # Store performance before deletion
-            if GAME_WON:
-                agent_stats['wins'] += 1
+        # Loop through the results and print each agent's name and average score
+        for agent, stats in results:
+            print(f"Agent: {agent.__name__}") 
+            for agent_results in list(stats):
+                print(f"Result: {'Win' if agent_results[1]['game_won'] else 'Loss'}")
 
-            # Print results for this run
-            log_message(f"AGENT:{agent_program.__name__}\tRUN:{run}/{args.runs}\tSTEPS:{args.steps}\tRESULT:{'WIN' if GAME_WON else 'LOSE'}\tPERFORMANCE:{agent.performance:5}\t\tTIME:{elapsed_time:.4f}s")
+    run_agent_comparison()
 
-            # Remove the agent from the environment if it's still in the environment
-            if agent in env.things:
-                env.delete_thing(agent)
+    # agent_list = [RandomAgent().random_move, ReflexAgent().cheapest_move, TableDrivenAgent().table_action, GoalBasedAgent().goalbased_action]
 
-            # Reset the global variable GAME_WON for the next run
-            GAME_WON = False
+    # print("\nAGENT RESULTS")
+    # for agent_program in agent_list:
+    #     log_message("")
+    #     log_message("********************************************************")
+    #     log_message(f"* Agent: {agent_program.__name__:45} *")
+    #     log_message("********************************************************")
 
-        # Print summary statistics for this agent
-        avg_performance = agent_stats['total_performance'] / args.runs
-        win_rate = (agent_stats['wins'] / args.runs) * 100
-        print(f"=> {agent_program.__name__:20}:  Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({agent_stats['wins']}/{args.runs})")
-        # print(f"\nSummary for [{agent_program.__name__:30}]: Average Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({agent_stats['wins']}/{args.runs})")
+    #     # Statistics for this agent across all runs
+    #     agent_stats = {
+    #         'total_performance': 0,
+    #         'wins': 0
+    #     }
+
+    #     # Create a new environment for the set of runs per agent type
+    #     env = create_gridworld_environment(args.width, args.depth, obstacle_pos, positive_pos, negative_pos)
+
+    #     # Run the agent the specified number of times
+    #     for run in range(1, args.runs + 1):
+    #         log_message(f"\nRun {run} of {args.runs}")
+
+    #         # Add an agent to the environment
+    #         agent = Agent(agent_program)
+    #         env.add_thing(agent, agent_pos)
+    #         log_message(f"Starting position is {agent_pos}")
+
+    #         # Run the simulation and measure time
+    #         start_time = time.time()
+    #         env.run(args.steps)
+    #         end_time = time.time()
+    #         elapsed_time = end_time - start_time
+
+    #         # Update statistics using the dictionary
+    #         agent_stats['total_performance'] += agent.performance  # Store performance before deletion
+    #         if GAME_WON:
+    #             agent_stats['wins'] += 1
+
+    #         # Print results for this run
+    #         log_message(f"AGENT:{agent_program.__name__}\tRUN:{run}/{args.runs}\tSTEPS:{args.steps}\tRESULT:{'WIN' if GAME_WON else 'LOSE'}\tPERFORMANCE:{agent.performance:5}\t\tTIME:{elapsed_time:.4f}s")
+
+    #         # Remove the agent from the environment if it's still in the environment
+    #         if agent in env.things:
+    #             env.delete_thing(agent)
+    #             del agent
+
+    #         # Reset the global variable GAME_WON for the next run
+    #         GAME_WON = False
+
+    #     # Print summary statistics for this agent
+    #     avg_performance = agent_stats['total_performance'] / args.runs
+    #     win_rate = (agent_stats['wins'] / args.runs) * 100
+    #     print(f"=> {agent_program.__name__:20}:  Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({agent_stats['wins']}/{args.runs})")
+    #     # print(f"\nSummary for [{agent_program.__name__:30}]: Average Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({agent_stats['wins']}/{args.runs})")
 
 def searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos):
     problem = GridSearchProblem(
@@ -519,17 +616,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='A1_COMP9016_Nagle_JohnPaul_R00065426')
     parser.add_argument('-v', '--verbose', action='store_true', help='Print detailed movement and agent information')
     parser.add_argument('-s', '--steps', type=int, nargs='?', const=1, default=40, help='Number of Agent steps per run to attempt to win the game (agent only) (DEFAULT: 40)')
-    parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=500, help='Number of times to run each Agent (agent only) (DEFAULT: 500)')
+    parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=10, help='Number of times to run each Agent (agent only) (DEFAULT: 500)')
     parser.add_argument('-w', '--width', type=int, nargs='?', const=1, default=6, help='Width of the grid world (DEFAULT: 6)')
     parser.add_argument('-d', '--depth', type=int, nargs='?', const=1, default=6, help='depth of the grid world (DEFAULT: 6)')
     args = parser.parse_args()
 
     print_args(args)
 
-    # Generate random positions for obstacle, positive destination, and negative destination as well as an initial position for the agent
-    obstacle_pos, positive_pos, negative_pos, agent_pos, occupied_positions = generate_random_starting_positions(args.width, args.depth)
 
-    draw_grid(agent_pos, obstacle_pos, positive_pos, negative_pos)
 
-    building_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
+    # building_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
+    building_your_world()
     # searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
