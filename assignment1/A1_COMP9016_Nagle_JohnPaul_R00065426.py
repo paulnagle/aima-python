@@ -39,7 +39,7 @@ AGENTS:
 
 UNINFORMED SEARCHES:
  - Breadth First Search
- - height First Search
+ - Depth First Search
  - Uniform Cost Search
 
 INFORMED SEARCHES:
@@ -553,7 +553,7 @@ def searching_your_world():
 
     print("\nUNINFORMED SEARCH RESULTS")
     print(f"=> Breadth First Search:     Cost: {solution_bfs.path_cost:5} solution {solution_bfs.solution()}  ")
-    print(f"=> height First Search  :     Cost: {solution_dfs.path_cost:5} solution {solution_dfs.solution()}  ")
+    print(f"=> Depth First Search  :     Cost: {solution_dfs.path_cost:5} solution {solution_dfs.solution()}  ")
     print(f"=> Uniform Cost Search :     Cost: {solution_ucs.path_cost:5} solution {solution_ucs.solution()}  ")
 
     problemInformed = GridSearchProblemWithHeuristic(
