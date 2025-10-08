@@ -14,31 +14,32 @@ If the agent reaches the winning block it gets 100 points, wins the game and the
 If the agent does not reach the winning block in the set number of moves, the game ends and the agent has lost the game.
 
 Here is an example map of the 2D world
-Obstacle location is   (1, 1)
-Positive location is   (4, 3)
-Negative location is   (0, 4)
-Agent location is      (6, 2)
+Obstacle location is   (1, 6)
+Winning location is   (4, 4)
+Penalty location is   (0, 4)
+Agent location is      (6, 5)
 
-    0 1 2 3 4 5 6 7
   +-----------------+
-0 | . . . . . . . . |
-1 | . O . . . . . . |
-2 | . . . . . . A . |
-3 | . . . . P . . . |
-4 | N . . . . . . . |
-5 | . . . . . . . . |
-6 | . . . . . . . . |
 7 | . . . . . . . . |
+6 | . O . . . . . . |
+5 | . . . . . . A . |
+4 | . . . . W . . . |
+3 | P . . . . . . . |
+2 | . . . . . . . . |
+1 | . . . . . . . . |
+0 | . . . . . . . . |
   +-----------------+
+    0 1 2 3 4 5 6 7
 
 AGENTS:
  - Random Agent, picks the next move randomly
  - Simple Reflex agent, always moves to the cheapest adjacent square.
  - Table based agent, uses a table to decide the next move
+ - Goal based action. "current_location = Winning location" is the goal. We use a search algoithm to decide the next move
 
 UNINFORMED SEARCHES:
  - Breadth First Search
- - Depth First Search
+ - height First Search
  - Uniform Cost Search
 
 INFORMED SEARCHES:
@@ -69,8 +70,8 @@ from search import Problem, breadth_first_graph_search, depth_first_graph_search
 GAME_WON=False
 
 direction_to_coords = {
-    'up': (0, -1),
-    'down': (0, 1),
+    'up': (0, 1),
+    'down': (0, -1),
     'left': (-1, 0),
     'right': (1, 0)
 }
@@ -85,7 +86,7 @@ def draw_grid(agent, obstacle, positive, negative):
     # Just for reference, draw the grid with the agent, obstacles, winning and penalty squares marked
     print("\nA=Agent, W=Winning Square, P=Penalty Square, O=Obstacle\n")
     rows = args.width
-    cols = args.depth
+    cols = args.height
     content = [["."]*cols for _ in range(rows)]
 
     grid = [
@@ -130,10 +131,10 @@ class NegativeDestination(Thing):
 
 class GridWorldEnvironment(XYEnvironment):
     """ This environment has a grid of rows and columns with obstacles """
-    def __init__(self, width, depth):
-        super().__init__()
+    def __init__(self, width, height):
+        super().__init__(width, height)
         self.width = width
-        self.depth = depth
+        self.height = height
 
     def percept(self, agent):
         # A list of available movements from the agent's current location and the associated cost
@@ -144,29 +145,29 @@ class GridWorldEnvironment(XYEnvironment):
                 if hasattr(thing, 'location') and thing.location is not None:
                     obstacle_positions.append(thing.location)
 
-        available_moves_with_costs = self.get_available_moves_with_costs(x, y, self.width, self.depth, obstacle_positions)
+        available_moves_with_costs = self.get_available_moves_with_costs(x, y, self.width, self.height, obstacle_positions)
         return available_moves_with_costs
 
-    def get_available_moves_with_costs(self, x, y, width, depth, obstacles=None):
+    def get_available_moves_with_costs(self, x, y, width, height, obstacles=None):
         # Returns a list of tuples containing all  possible moves and their associated costs
         if obstacles is None:
             obstacles = []
 
         available_moves = []
 
-        if y > 0 and (x, y-1) not in obstacles:  # UP is ok
-            available_moves.append(('up', (x + (y-1))))
+        if y < height -1 and ((x, y+1) not in obstacles) : 
+            available_moves.append(('up', (x + (y+1))))
 
-        if y < depth-1 and (x, y+1) not in obstacles:  # DOWN is ok
-            available_moves.append(('down', (x + (y+1))))
+        if y > 0 and (x, y-1) not in obstacles:
+            available_moves.append(('down', (x + (y-1))))
 
-        if x < width-1 and (x+1, y) not in obstacles:  # RIGHT is ok
+        if x < width-1 and (x+1, y) not in obstacles:
             available_moves.append(('right', ((x+1) + y)))
 
-        if x > 0 and (x-1, y) not in obstacles:  # LEFT is ok
+        if x > 0 and (x-1, y) not in obstacles: 
             available_moves.append(('left', ((x-1) + y)))
 
-        # print(f"AVAILABLE MOVES FROM {x, y}: {available_moves}")
+        # print(f"*********AVAILABLE MOVES FROM {x, y}: {available_moves}")
         return available_moves
 
     def execute_action(self, agent, action):
@@ -195,7 +196,7 @@ class GridWorldEnvironment(XYEnvironment):
         log_message(f"✅ You  moved [{action:5}] from {initial_location} to {agent.location} successfully : Performance penalty: {agent.location[0] + agent.location[1]:4}  Performance Total: {agent.performance:4}")
 
         # Charge the agent for making a move (the cost is the sum of the x and y co-ordinates)
-        agent.performance -= (agent.location[0] + agent.location[1])
+        agent.performance = agent.performance - (agent.location[0] + agent.location[1])
 
         # Check destinations and apply effects
         self._check_destinations(agent)
@@ -205,10 +206,10 @@ class GridWorldEnvironment(XYEnvironment):
             agent.location[0],
             agent.location[1],
             self.width,
-            self.depth,
+            self.height,
             obstacle_positions
         )
-        return any(action in tup for tup in available_moves)
+        return any(action in tup[0] for tup in available_moves)
 
     def _check_destinations(self, agent):
         # Check if agent has landed on the winning or penalyty squares
@@ -293,59 +294,67 @@ class TableDrivenAgent(Agent):
 class GoalBasedAgent(Agent):
     # GOAL is self.location == goal_location
     def __init__(self, agent_pos, positive_pos, negative_pos, obstacle_pos):
+        # Maintain some state info for the agent
         self.location = agent_pos
         self.goal_location = positive_pos
         self.penalty_location = negative_pos
         self.obstacle_location = obstacle_pos
- 
         super().__init__(self.goalbased_action)
 
     
     def goalbased_action(self, percept):
         # A goal based search, where the goal is the Winning position i.e. positive_pos
         # We will use the astar search to find the next move towards the goal
+        global GAME_WON
 
         problem = GridSearchProblemWithHeuristic(
             initial=self.location,
             goal=self.goal_location,
             width=args.width,
-            depth=args.depth,
+            height=args.height,
             obstacles=[self.obstacle_location, self.penalty_location]
         )
         star_search_result = astar_search(problem)
+
+        if star_search_result is None:
+            return None
+
         # Update state based on the action
         if star_search_result.action in direction_to_coords:
             dx, dy = direction_to_coords[star_search_result.action]
             self.location = (self.location[0] + dx, self.location[1] + dy)
         
+        if self.location == self.goal_location:
+            GANE_WON = True
+        
         return star_search_result.action
 
 
-def generate_random_starting_positions(width, depth):
+def generate_random_starting_positions(width, height):
     # Generate random positions for obstacle, positive destination, negative destination, and the agent.
     occupied_positions = []
 
     obstacle_x = random.randint(0, width - 1)
-    obstacle_y = random.randint(0, depth - 1)
+    obstacle_y = random.randint(0, height - 1)
     occupied_positions.append((obstacle_x, obstacle_y))
 
     while True:
         pos_x = random.randint(0, width - 1)
-        pos_y = random.randint(0, depth - 1)
+        pos_y = random.randint(0, height - 1)
         if (pos_x, pos_y) not in occupied_positions:
             occupied_positions.append((pos_x, pos_y))
             break
 
     while True:
         neg_x = random.randint(0, width - 1)
-        neg_y = random.randint(0, depth - 1)
+        neg_y = random.randint(0, height - 1)
         if (neg_x, neg_y) not in occupied_positions:
             occupied_positions.append((neg_x, neg_y))
             break
 
     while True:
         agent_x = random.randint(0, width - 1)
-        agent_y = random.randint(0, depth - 1)
+        agent_y = random.randint(0, height - 1)
         if (agent_x, agent_y) not in occupied_positions:
             occupied_positions.append((agent_x, agent_y))
             break
@@ -359,9 +368,9 @@ def generate_random_starting_positions(width, depth):
     return (obstacle_x, obstacle_y), (pos_x, pos_y), (neg_x, neg_y), (agent_x, agent_y), occupied_positions
 
 # Create and set up the environment
-def create_gridworld_environment(width, depth, obstacle_pos, positive_pos, negative_pos):
-    # Create the 2D grid world with the set width and depth, and Things located at the specified positions
-    env = GridWorldEnvironment(width, depth)
+def create_gridworld_environment(width, height, obstacle_pos, positive_pos, negative_pos):
+    # Create the 2D grid world with the set width and height, and Things located at the specified positions
+    env = GridWorldEnvironment(width, height)
     env.add_thing(Obstacle(), obstacle_pos)
     env.add_thing(PositiveDestination(), positive_pos)
     env.add_thing(NegativeDestination(), negative_pos)
@@ -370,23 +379,23 @@ def create_gridworld_environment(width, depth, obstacle_pos, positive_pos, negat
 
 # Search
 class GridSearchProblem(Problem):
-    def __init__(self, initial, goal, width, depth, obstacles):
+    def __init__(self, initial, goal, width, height, obstacles):
         super().__init__(initial, goal)
         self.width = width
-        self.depth = depth
+        self.height = height
         self.obstacles = set(obstacles)
 
     def actions(self, state):
         """Return valid directions from the current state."""
         x, y = state
         directions = []
-        if y > 0 and (x, y - 1) not in self.obstacles:
+        if y < self.height and (x, y + 1) not in self.obstacles:
             directions.append('up')
-        if y < self.depth - 1 and (x, y + 1) not in self.obstacles:
+        if y > 0 and (x, y - 1) not in self.obstacles:
             directions.append('down')
         if x > 0 and (x - 1, y) not in self.obstacles:
             directions.append('left')
-        if x < self.width - 1 and (x + 1, y) not in self.obstacles:
+        if x < self.width and (x + 1, y) not in self.obstacles:
             directions.append('right')
         return directions
 
@@ -394,9 +403,9 @@ class GridSearchProblem(Problem):
         """Return the new state after applying the action."""
         x, y = state
         if action == 'up':
-            return (x, y - 1)
-        elif action == 'down':
             return (x, y + 1)
+        elif action == 'down':
+            return (x, y - 1)
         elif action == 'left':
             return (x - 1, y)
         elif action == 'right':
@@ -441,11 +450,12 @@ def test_agent(AgentFactory, steps, envs):
         end_time = time.time()
         elapsed_time = end_time - start_time
 
+        run_stat['agent'] = agent.__name__
         run_stat['time_taken'] = elapsed_time
         run_stat['performance'] = agent.performance
         run_stat['game_won'] = GAME_WON
-        agent_stats.append(run_stat)
-        return agent_stats
+
+        return run_stat
 
     agent_stats = []
     for env in envs:
@@ -474,7 +484,7 @@ def building_your_world():
         return agent
 
     def goal_agent_factory():
-        obstacle_pos, positive_pos, negative_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.depth)
+        obstacle_pos, positive_pos, negative_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
         agent = GoalBasedAgent(agent_pos, positive_pos, negative_pos, obstacle_pos)
         agent.__name__ = "GoalBasedAgent"
         return agent
@@ -482,9 +492,9 @@ def building_your_world():
     # Define the environment factory
     def env_factory_gridworld():
         # Generate random positions for obstacle, positive destination, and negative destination as well as an initial position for the agent
-        obstacle_pos, positive_pos, negative_pos, _, _ = generate_random_starting_positions(args.width, args.depth)
+        obstacle_pos, positive_pos, negative_pos, _, _ = generate_random_starting_positions(args.width, args.height)
         # draw_grid(agent_pos, obstacle_pos, positive_pos, negative_pos)
-        return create_gridworld_environment(args.width, args.depth, obstacle_pos, positive_pos, negative_pos)
+        return create_gridworld_environment(args.width, args.height, obstacle_pos, positive_pos, negative_pos)
 
     # List of agent factories for comparison 
     agent_factories = [
@@ -500,9 +510,16 @@ def building_your_world():
 
         # Loop through the results and print each agent's name and average score
         for agent, stats in results:
-            print(f"Agent: {agent.__name__}") 
+            print(f"** {stats[0]['agent']} **") 
+            print("Result:\t\tTime:\t\tPerformance:")
             for agent_results in list(stats):
-                print(f"Result: {'Win' if agent_results[1]['game_won'] else 'Loss'}")
+                print(
+
+                    f"{'Win' if agent_results['game_won'] else 'Loss'}\t\t"
+                    f"{agent_results['time_taken']:.5f} seconds\t\t"
+                    f"{agent_results['performance']}"
+                    )
+            
 
     run_agent_comparison()
 
@@ -522,7 +539,7 @@ def building_your_world():
     #     }
 
     #     # Create a new environment for the set of runs per agent type
-    #     env = create_gridworld_environment(args.width, args.depth, obstacle_pos, positive_pos, negative_pos)
+    #     env = create_gridworld_environment(args.width, args.height, obstacle_pos, positive_pos, negative_pos)
 
     #     # Run the agent the specified number of times
     #     for run in range(1, args.runs + 1):
@@ -561,12 +578,15 @@ def building_your_world():
     #     print(f"=> {agent_program.__name__:20}:  Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({agent_stats['wins']}/{args.runs})")
     #     # print(f"\nSummary for [{agent_program.__name__:30}]: Average Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({agent_stats['wins']}/{args.runs})")
 
-def searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos):
+def searching_your_world():
+
+    obstacle_pos, positive_pos, negative_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
+
     problem = GridSearchProblem(
         initial=agent_pos,
         goal=positive_pos,
         width=args.width,
-        depth=args.depth,
+        height=args.height,
         obstacles=[obstacle_pos, negative_pos]
     )
 
@@ -576,14 +596,14 @@ def searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos):
 
     print("\nUNINFORMED SEARCH RESULTS")
     print(f"=> Breadth First Search:     Cost: {solution_bfs.path_cost:5} solution {solution_bfs.solution()}  ")
-    print(f"=> Depth First Search  :     Cost: {solution_dfs.path_cost:5} solution {solution_dfs.solution()}  ")
+    print(f"=> height First Search  :     Cost: {solution_dfs.path_cost:5} solution {solution_dfs.solution()}  ")
     print(f"=> Uniform Cost Search :     Cost: {solution_ucs.path_cost:5} solution {solution_ucs.solution()}  ")
 
     problemInformed = GridSearchProblemWithHeuristic(
         initial=agent_pos,
         goal=positive_pos,
         width=args.width,
-        depth=args.depth,
+        height=args.height,
         obstacles=[obstacle_pos, negative_pos]
     )
 
@@ -607,7 +627,7 @@ def print_args(args):
           f"          STEPS=> {args.steps}"
           f"          RUNS=> {args.runs}"
           f"          WIDTH=> {args.width}"
-          f"          DEPTH=> {args.depth}"
+          f"          height=> {args.height}"
           )
     print("\n*** Pass the -h parameter to see details on how to configure the arguments ***")
 
@@ -616,15 +636,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='A1_COMP9016_Nagle_JohnPaul_R00065426')
     parser.add_argument('-v', '--verbose', action='store_true', help='Print detailed movement and agent information')
     parser.add_argument('-s', '--steps', type=int, nargs='?', const=1, default=40, help='Number of Agent steps per run to attempt to win the game (agent only) (DEFAULT: 40)')
-    parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=10, help='Number of times to run each Agent (agent only) (DEFAULT: 500)')
+    parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=500, help='Number of times to run each Agent (agent only) (DEFAULT: 10)')
     parser.add_argument('-w', '--width', type=int, nargs='?', const=1, default=6, help='Width of the grid world (DEFAULT: 6)')
-    parser.add_argument('-d', '--depth', type=int, nargs='?', const=1, default=6, help='depth of the grid world (DEFAULT: 6)')
+    parser.add_argument('-d', '--height', type=int, nargs='?', const=1, default=6, help='height of the grid world (DEFAULT: 6)')
     args = parser.parse_args()
 
     print_args(args)
 
-
-
-    # building_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
     building_your_world()
-    # searching_your_world(obstacle_pos, positive_pos, negative_pos, agent_pos)
+    searching_your_world()
