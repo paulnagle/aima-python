@@ -65,7 +65,7 @@ if parent_dir not in sys.path:
 
 # Now you can import a module from the parent directory
 from agents import Thing, XYEnvironment, Agent, Obstacle
-from search import Problem, breadth_first_graph_search, depth_first_graph_search, uniform_cost_search, greedy_best_first_graph_search, astar_search, recursive_best_first_search
+from search import Problem, InstrumentedProblem, name, print_table, breadth_first_graph_search, depth_first_graph_search, uniform_cost_search, greedy_best_first_graph_search, astar_search, recursive_best_first_search
 
 GAME_WON=False
 
@@ -180,6 +180,10 @@ class GridWorldEnvironment(XYEnvironment):
                 # Safely get location if it exists
                 if hasattr(thing, 'location') and thing.location is not None:
                     obstacle_positions.append(thing.location)
+
+        if agent.location[0] > 6 or agent.location[1] > 6:
+            print("WHOOPS!!")
+        
 
         # Check if move is valid
         if not action:
@@ -318,15 +322,10 @@ class GoalBasedAgent(Agent):
 
         if star_search_result is None:
             return None
-
-        # Update state based on the action
-        if star_search_result.action in direction_to_coords:
-            dx, dy = direction_to_coords[star_search_result.action]
-            self.location = (self.location[0] + dx, self.location[1] + dy)
-        
+            
         if self.location == self.goal_location:
-            GANE_WON = True
-        
+            GAME_WON = True
+            
         return star_search_result.action
 
 
@@ -389,13 +388,13 @@ class GridSearchProblem(Problem):
         """Return valid directions from the current state."""
         x, y = state
         directions = []
-        if y < self.height and (x, y + 1) not in self.obstacles:
+        if y + 1 < self.height and (x, y + 1) not in self.obstacles:
             directions.append('up')
         if y > 0 and (x, y - 1) not in self.obstacles:
             directions.append('down')
         if x > 0 and (x - 1, y) not in self.obstacles:
             directions.append('left')
-        if x < self.width and (x + 1, y) not in self.obstacles:
+        if x + 1 < self.width and (x + 1, y) not in self.obstacles:
             directions.append('right')
         return directions
 
@@ -528,7 +527,7 @@ def building_your_world():
                     f"{agent_results['performance']}"
                     )
             print(f"=> {agent_name}\t\t"
-            f"Games won: {total_games_won / total_games_lost * 100:.1f}%\t\t"
+            f"Games won: {(total_games_won / (total_games_won + total_games_lost)) * 100:.1f}%\t\t"
             f"Average performance: {total_performance / len(stats):.2f}\t\t"
             f"Average time taken: {total_time_taken / len(stats):.6f} seconds")
 
@@ -537,6 +536,15 @@ def building_your_world():
 
 
 def searching_your_world():
+
+    def compare_searchers(problems, header,searchers):
+        def do(searcher, problem):
+            p = InstrumentedProblem(problem)
+            searcher(p)
+            return p
+
+        table = [[name(s)] + [do(s, p) for p in problems] for s in searchers]
+        print_table(table, header)
 
     obstacle_pos, positive_pos, negative_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
 
@@ -565,19 +573,27 @@ def searching_your_world():
         obstacles=[obstacle_pos, negative_pos]
     )
 
-    print("\nINFORMED SEARCH RESULTS")
+    # print("\nINFORMED SEARCH RESULTS")
 
-    solution_astar = astar_search(problemInformed, h=problemInformed.h)
-    print(f"=> A*:      Cost: {solution_astar.path_cost:5} Solution: {solution_astar.solution()}")
+    # solution_astar = astar_search(problemInformed, h=problemInformed.h)
+    # print(f"=> A*:      Cost: {solution_astar.path_cost:5} Solution: {solution_astar.solution()}")
 
-    solution_rbfs = recursive_best_first_search(problemInformed, h=problemInformed.h)
-    print(f"=> RBFS:    Cost: {solution_rbfs.path_cost:5} Solution: {solution_rbfs.solution()}")
+    # solution_rbfs = recursive_best_first_search(problemInformed, h=problemInformed.h)
+    # print(f"=> RBFS:    Cost: {solution_rbfs.path_cost:5} Solution: {solution_rbfs.solution()}")
 
-    solution_greedy = greedy_best_first_graph_search(problemInformed, f=problemInformed.h)
-    if solution_greedy:
-        print(f"=> Greedy:  Cost: {solution_greedy.path_cost:5} Solution: {solution_greedy.solution()}")
-    else:
-        print("=> Greedy:  No solution found")
+    # solution_greedy = greedy_best_first_graph_search(problemInformed, f=problemInformed.h)
+    # if solution_greedy:
+    #     print(f"=> Greedy:  Cost: {solution_greedy.path_cost:5} Solution: {solution_greedy.solution()}")
+    # else:
+    #     print("=> Greedy:  No solution found")
+    searchers = [astar_search, recursive_best_first_search, greedy_best_first_graph_search]
+    header=['Searcher', 'romania_map(Arad, Bucharest)','romania_map(Oradea, Neamt)', 'australia_map']
+    compare_searchers([problemInformed], header, searchers)
+
+
+
+
+
 
 
 def print_args(args):
@@ -596,8 +612,8 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--verbose', action='store_true', help='Print detailed movement and agent information')
     parser.add_argument('-s', '--steps', type=int, nargs='?', const=1, default=40, help='Number of Agent steps per run to attempt to win the game (agent only) (DEFAULT: 40)')
     parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=500, help='Number of times to run each Agent (agent only) (DEFAULT: 10)')
-    parser.add_argument('-w', '--width', type=int, nargs='?', const=1, default=6, help='Width of the grid world (DEFAULT: 6)')
-    parser.add_argument('-d', '--height', type=int, nargs='?', const=1, default=6, help='height of the grid world (DEFAULT: 6)')
+    parser.add_argument('-x', '--width', type=int, nargs='?', const=1, default=6, help='Width of the grid world (DEFAULT: 6)')
+    parser.add_argument('-y', '--height', type=int, nargs='?', const=1, default=6, help='height of the grid world (DEFAULT: 6)')
     args = parser.parse_args()
 
     print_args(args)
