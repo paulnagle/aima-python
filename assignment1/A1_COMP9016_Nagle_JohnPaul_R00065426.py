@@ -508,75 +508,33 @@ def building_your_world():
         # Run the comparison between the agents
         results = compare_agents(env_factory_gridworld, agent_factories, n=args.runs, steps=args.steps)
 
+        agent_name = ''
         # Loop through the results and print each agent's name and average score
         for agent, stats in results:
-            print(f"** {stats[0]['agent']} **") 
-            print("Result:\t\tTime:\t\tPerformance:")
+            agent_name = stats[0]['agent']
+            log_message("Result:\t\tTime:\t\tPerformance:")
+            total_games_won = total_games_lost = total_time_taken = total_performance = 0
+            
             for agent_results in list(stats):
-                print(
-
+                if agent_results['game_won']:
+                    total_games_won += 1
+                else:
+                    total_games_lost += 1
+                total_time_taken += agent_results['time_taken']
+                total_performance += agent_results['performance']
+                log_message(
                     f"{'Win' if agent_results['game_won'] else 'Loss'}\t\t"
                     f"{agent_results['time_taken']:.5f} seconds\t\t"
                     f"{agent_results['performance']}"
                     )
-            
+            print(f"=> {agent_name}\t\t"
+            f"Games won: {total_games_won / total_games_lost * 100:.1f}%\t\t"
+            f"Average performance: {total_performance / len(stats):.2f}\t\t"
+            f"Average time taken: {total_time_taken / len(stats):.6f} seconds")
 
+    print("AGENT RESULTS")    
     run_agent_comparison()
 
-    # agent_list = [RandomAgent().random_move, ReflexAgent().cheapest_move, TableDrivenAgent().table_action, GoalBasedAgent().goalbased_action]
-
-    # print("\nAGENT RESULTS")
-    # for agent_program in agent_list:
-    #     log_message("")
-    #     log_message("********************************************************")
-    #     log_message(f"* Agent: {agent_program.__name__:45} *")
-    #     log_message("********************************************************")
-
-    #     # Statistics for this agent across all runs
-    #     agent_stats = {
-    #         'total_performance': 0,
-    #         'wins': 0
-    #     }
-
-    #     # Create a new environment for the set of runs per agent type
-    #     env = create_gridworld_environment(args.width, args.height, obstacle_pos, positive_pos, negative_pos)
-
-    #     # Run the agent the specified number of times
-    #     for run in range(1, args.runs + 1):
-    #         log_message(f"\nRun {run} of {args.runs}")
-
-    #         # Add an agent to the environment
-    #         agent = Agent(agent_program)
-    #         env.add_thing(agent, agent_pos)
-    #         log_message(f"Starting position is {agent_pos}")
-
-    #         # Run the simulation and measure time
-    #         start_time = time.time()
-    #         env.run(args.steps)
-    #         end_time = time.time()
-    #         elapsed_time = end_time - start_time
-
-    #         # Update statistics using the dictionary
-    #         agent_stats['total_performance'] += agent.performance  # Store performance before deletion
-    #         if GAME_WON:
-    #             agent_stats['wins'] += 1
-
-    #         # Print results for this run
-    #         log_message(f"AGENT:{agent_program.__name__}\tRUN:{run}/{args.runs}\tSTEPS:{args.steps}\tRESULT:{'WIN' if GAME_WON else 'LOSE'}\tPERFORMANCE:{agent.performance:5}\t\tTIME:{elapsed_time:.4f}s")
-
-    #         # Remove the agent from the environment if it's still in the environment
-    #         if agent in env.things:
-    #             env.delete_thing(agent)
-    #             del agent
-
-    #         # Reset the global variable GAME_WON for the next run
-    #         GAME_WON = False
-
-    #     # Print summary statistics for this agent
-    #     avg_performance = agent_stats['total_performance'] / args.runs
-    #     win_rate = (agent_stats['wins'] / args.runs) * 100
-    #     print(f"=> {agent_program.__name__:20}:  Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({agent_stats['wins']}/{args.runs})")
-    #     # print(f"\nSummary for [{agent_program.__name__:30}]: Average Performance: {avg_performance:.2f} Win Rate: {win_rate:.2f}% ({agent_stats['wins']}/{args.runs})")
 
 def searching_your_world():
 
@@ -623,13 +581,14 @@ def searching_your_world():
 
 
 def print_args(args):
+    print("\n*** Pass the -h parameter to see details on how to configure the arguments ***")
     print("\nCURRENT ARGUMENTS:"
           f"          STEPS=> {args.steps}"
           f"          RUNS=> {args.runs}"
           f"          WIDTH=> {args.width}"
-          f"          height=> {args.height}"
+          f"          HEIGHT=> {args.height}\n"
           )
-    print("\n*** Pass the -h parameter to see details on how to configure the arguments ***")
+
 
 if __name__ == "__main__":
     # command line arguments
