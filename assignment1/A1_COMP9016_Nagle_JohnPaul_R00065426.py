@@ -537,15 +537,6 @@ def building_your_world():
 
 def searching_your_world():
 
-    def compare_searchers(problems, header,searchers):
-        def do(searcher, problem):
-            p = InstrumentedProblem(problem)
-            searcher(p)
-            return p
-
-        table = [[name(s)] + [do(s, p) for p in problems] for s in searchers]
-        print_table(table, header)
-
     obstacle_pos, positive_pos, negative_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
 
     problem = GridSearchProblem(
@@ -573,22 +564,21 @@ def searching_your_world():
         obstacles=[obstacle_pos, negative_pos]
     )
 
-    # print("\nINFORMED SEARCH RESULTS")
+    problemInstrumented = InstrumentedProblem(problemInformed)
 
-    # solution_astar = astar_search(problemInformed, h=problemInformed.h)
-    # print(f"=> A*:      Cost: {solution_astar.path_cost:5} Solution: {solution_astar.solution()}")
+    print("\nINFORMED SEARCH RESULTS")
 
-    # solution_rbfs = recursive_best_first_search(problemInformed, h=problemInformed.h)
-    # print(f"=> RBFS:    Cost: {solution_rbfs.path_cost:5} Solution: {solution_rbfs.solution()}")
+    solution_astar = astar_search(problemInstrumented, h=problemInformed.h)
+    print(f"=> A*:      Cost: {solution_astar.path_cost:5} Solution: {solution_astar.solution()}")
 
-    # solution_greedy = greedy_best_first_graph_search(problemInformed, f=problemInformed.h)
-    # if solution_greedy:
-    #     print(f"=> Greedy:  Cost: {solution_greedy.path_cost:5} Solution: {solution_greedy.solution()}")
-    # else:
-    #     print("=> Greedy:  No solution found")
-    searchers = [astar_search, recursive_best_first_search, greedy_best_first_graph_search]
-    header=['Searcher', 'romania_map(Arad, Bucharest)','romania_map(Oradea, Neamt)', 'australia_map']
-    compare_searchers([problemInformed], header, searchers)
+    solution_rbfs = recursive_best_first_search(problemInstrumented, h=problemInformed.h)
+    print(f"=> RBFS:    Cost: {solution_rbfs.path_cost:5} Solution: {solution_rbfs.solution()}")
+
+    solution_greedy = greedy_best_first_graph_search(problemInstrumented, f=problemInformed.h)
+    if solution_greedy:
+        print(f"=> Greedy:  Cost: {solution_greedy.path_cost:5} Solution: {solution_greedy.solution()}")
+    else:
+        print("=> Greedy:  No solution found")
 
 
 
