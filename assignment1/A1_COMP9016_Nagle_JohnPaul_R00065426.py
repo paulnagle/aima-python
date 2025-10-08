@@ -76,7 +76,7 @@ direction_to_coords = {
     'right': (1, 0)
 }
 
-def log_message(message):
+def verbose_message(message):
     """Log a message if verbose mode is enabled."""
     if args.verbose:
         print(message)
@@ -189,7 +189,7 @@ class GridWorldEnvironment(XYEnvironment):
         if not action:
             return
         if not self._is_valid_move(agent, action, obstacle_positions):
-            log_message(f"❌ Tried to go [{action:5}] from {agent.location}, but cant go in that direction")
+            verbose_message(f"❌ Tried to go [{action:5}] from {agent.location}, but cant go in that direction")
             return
 
         # Update agent location based on action using the direction_to_coords dictionary
@@ -197,7 +197,7 @@ class GridWorldEnvironment(XYEnvironment):
             dx, dy = direction_to_coords[action]
             agent.location = (agent.location[0] + dx, agent.location[1] + dy)
 
-        log_message(f"✅ You  moved [{action:5}] from {initial_location} to {agent.location} successfully : Performance penalty: {agent.location[0] + agent.location[1]:4}  Performance Total: {agent.performance:4}")
+        verbose_message(f"✅ You  moved [{action:5}] from {initial_location} to {agent.location} successfully : Performance penalty: {agent.location[0] + agent.location[1]:4}  Performance Total: {agent.performance:4}")
 
         # Charge the agent for making a move (the cost is the sum of the x and y co-ordinates)
         agent.performance = agent.performance - (agent.location[0] + agent.location[1])
@@ -223,16 +223,16 @@ class GridWorldEnvironment(XYEnvironment):
         positive_destinations = self.list_things_at(agent.location, PositiveDestination)
         if positive_destinations:
             agent.performance += 100
-            log_message("Agent reached winning destination! Performance increase 100.")
-            log_message(f"🎉 Congratulations, you WON the game with a score of {agent.performance}!!")
-            log_message("👏 Well done! You've successfully completed the game!")
+            verbose_message("Agent reached winning destination! Performance increase 100.")
+            verbose_message(f"🎉 Congratulations, you WON the game with a score of {agent.performance}!!")
+            verbose_message("👏 Well done! You've successfully completed the game!")
             GAME_WON = True
 
         # Check for negative destination (penalty)
         negative_destinations = self.list_things_at(agent.location, NegativeDestination)
         if negative_destinations:
             agent.performance -= 50
-            log_message(f"😭 You have reached the penalty destination!             : Performance penalty:   50  Performance Total: {agent.performance:4}")
+            verbose_message(f"😭 You have reached the penalty destination!             : Performance penalty:   50  Performance Total: {agent.performance:4}")
 
     def is_done(self):
         """ The environment is done if the agent has won the game or if no agents are alive. """
@@ -358,11 +358,11 @@ def generate_random_starting_positions(width, height):
             occupied_positions.append((agent_x, agent_y))
             break
 
-    log_message(f"Obstacle location is   ({obstacle_x}, {obstacle_y})")
-    log_message(f"Positive location is   ({pos_x}, {pos_y})")
-    log_message(f"Negative location is   ({neg_x}, {neg_y})")
-    log_message(f"Agent location is      ({agent_x}, {agent_y})")
-    log_message(f"Occupied positions are [{occupied_positions}]")
+    verbose_message(f"Obstacle location is   ({obstacle_x}, {obstacle_y})")
+    verbose_message(f"Positive location is   ({pos_x}, {pos_y})")
+    verbose_message(f"Negative location is   ({neg_x}, {neg_y})")
+    verbose_message(f"Agent location is      ({agent_x}, {agent_y})")
+    verbose_message(f"Occupied positions are [{occupied_positions}]")
 
     return (obstacle_x, obstacle_y), (pos_x, pos_y), (neg_x, neg_y), (agent_x, agent_y), occupied_positions
 
@@ -511,7 +511,7 @@ def building_your_world():
         # Loop through the results and print each agent's name and average score
         for agent, stats in results:
             agent_name = stats[0]['agent']
-            log_message("Result:\t\tTime:\t\tPerformance:")
+            verbose_message("Result:\t\tTime:\t\tPerformance:")
             total_games_won = total_games_lost = total_time_taken = total_performance = 0
             
             for agent_results in list(stats):
@@ -521,7 +521,7 @@ def building_your_world():
                     total_games_lost += 1
                 total_time_taken += agent_results['time_taken']
                 total_performance += agent_results['performance']
-                log_message(
+                verbose_message(
                     f"{'Win' if agent_results['game_won'] else 'Loss'}\t\t"
                     f"{agent_results['time_taken']:.5f} seconds\t\t"
                     f"{agent_results['performance']}"
