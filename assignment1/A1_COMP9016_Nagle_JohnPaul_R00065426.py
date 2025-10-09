@@ -19,17 +19,15 @@ Winning location is   (4, 4)
 Penalty location is   (0, 4)
 Agent location is      (6, 5)
 
-  +-----------------+
-7 | . . . . . . . . |
-6 | . O . . . . . . |
-5 | . . . . . . A . |
-4 | . . . . W . . . |
-3 | P . . . . . . . |
-2 | . . . . . . . . |
-1 | . . . . . . . . |
-0 | . . . . . . . . |
-  +-----------------+
-    0 1 2 3 4 5 6 7
+7 . . . . . . . . 
+6 . O . . . . . . 
+5 . . . . . . A . 
+4 . . . . W . . . 
+3 P . . . . . . . 
+2 . . . . . . . . 
+1 . . . . . . . . 
+0 . . . . . . . . 
+  0 1 2 3 4 5 6 7
 
 AGENTS:
  - Random Agent, picks the next move randomly
@@ -65,7 +63,7 @@ if parent_dir not in sys.path:
 
 # Now you can import a module from the parent directory
 from agents import Thing, XYEnvironment, Agent, Obstacle
-from search import Problem, InstrumentedProblem, name, print_table, breadth_first_graph_search, depth_first_graph_search, uniform_cost_search, greedy_best_first_graph_search, astar_search, recursive_best_first_search
+from search import Problem, InstrumentedProblem, depth_limited_search, name, print_table, breadth_first_graph_search, depth_first_graph_search, uniform_cost_search, greedy_best_first_graph_search, astar_search, recursive_best_first_search
 
 GAME_WON=False
 
@@ -81,51 +79,11 @@ def verbose_message(message):
     if args.verbose:
         print(message)
 
-# Based on https://stackoverflow.com/questions/61626953/python-printing-an-ascii-cartesian-coordinate-grid-from-a-2d-array-of-position
-def draw_grid(agent, obstacle, positive, negative):
-    # Just for reference, draw the grid with the agent, obstacles, winning and penalty squares marked
-    print("\nA=Agent, W=Winning Square, P=Penalty Square, O=Obstacle\n")
-    rows = args.width
-    cols = args.height
-    content = [["."]*cols for _ in range(rows)]
-
-    grid = [
-        (obstacle[0], obstacle[1], "O"),
-        (agent[0], agent[1], "A"),
-        (positive[0], positive[1], "W"),
-        (negative[0], negative[1], "P")]
-    for (x, y, c) in grid: content[y][x] = c
-
-    # build frame
-    width       = len(str(max(rows, cols)-1))
-    contentLine = "# | values |"
-
-    dashes      = "-".join("-"*width for _ in range(cols))
-    frameLine   = contentLine.replace("values", dashes)
-    frameLine   = frameLine.replace("#", " "*width)
-    frameLine   = frameLine.replace("| ", "+-").replace(" |", "-+")
-
-    # x-axis numbers (at the top)
-    numLine = contentLine.replace("|", " ")
-    numLine = numLine.replace("#", " "*width)
-    colNums = " ".join(f"{i:<{width}d}" for i in range(cols))
-    numLine = numLine.replace("values", colNums)
-    print(numLine)
-
-    # print grid
-    print(frameLine)
-    for i, row in enumerate(content):
-        values = " ".join(f"{v:{width}s}" for v in row)
-        line   = contentLine.replace("values", values)
-        line   = line.replace("#", f"{i:{width}d}")
-        print(line)
-    print(frameLine)
-
-class PositiveDestination(Thing):
+class WinningDestination(Thing):
     """ A destination that awards 100 points and wins the game when an agent reaches it """
     pass
 
-class NegativeDestination(Thing):
+class PenaltyDestination(Thing):
     """ A destination that penalises 50 points when an agent reaches it """
     pass
 
@@ -149,7 +107,7 @@ class GridWorldEnvironment(XYEnvironment):
         return available_moves_with_costs
 
     def get_available_moves_with_costs(self, x, y, width, height, obstacles=None):
-        # Returns a list of tuples containing all  possible moves and their associated costs
+        # Returns a list of tuples containing all possible moves and their associated costs
         if obstacles is None:
             obstacles = []
 
@@ -180,10 +138,6 @@ class GridWorldEnvironment(XYEnvironment):
                 # Safely get location if it exists
                 if hasattr(thing, 'location') and thing.location is not None:
                     obstacle_positions.append(thing.location)
-
-        if agent.location[0] > 6 or agent.location[1] > 6:
-            print("WHOOPS!!")
-        
 
         # Check if move is valid
         if not action:
@@ -216,21 +170,21 @@ class GridWorldEnvironment(XYEnvironment):
         return any(action in tup[0] for tup in available_moves)
 
     def _check_destinations(self, agent):
-        # Check if agent has landed on the winning or penalyty squares
+        # Check if agent has landed on the winning or penalty squares
         global GAME_WON
 
-        # Check for positive destination (winning)
-        positive_destinations = self.list_things_at(agent.location, PositiveDestination)
-        if positive_destinations:
+        # Check for winninf destination
+        winning_destinations = self.list_things_at(agent.location, WinningDestination)
+        if winning_destinations:
             agent.performance += 100
             verbose_message("Agent reached winning destination! Performance increase 100.")
             verbose_message(f"🎉 Congratulations, you WON the game with a score of {agent.performance}!!")
             verbose_message("👏 Well done! You've successfully completed the game!")
             GAME_WON = True
 
-        # Check for negative destination (penalty)
-        negative_destinations = self.list_things_at(agent.location, NegativeDestination)
-        if negative_destinations:
+        # Check for penalty destination
+        penalty_destinations = self.list_things_at(agent.location, PenaltyDestination)
+        if penalty_destinations:
             agent.performance -= 50
             verbose_message(f"😭 You have reached the penalty destination!             : Performance penalty:   50  Performance Total: {agent.performance:4}")
 
@@ -297,17 +251,17 @@ class TableDrivenAgent(Agent):
 
 class GoalBasedAgent(Agent):
     # GOAL is self.location == goal_location
-    def __init__(self, agent_pos, positive_pos, negative_pos, obstacle_pos):
+    def __init__(self, agent_pos, winning_pos, penalty_pos, obstacle_pos):
         # Maintain some state info for the agent
         self.location = agent_pos
-        self.goal_location = positive_pos
-        self.penalty_location = negative_pos
+        self.goal_location = winning_pos
+        self.penalty_location = penalty_pos
         self.obstacle_location = obstacle_pos
         super().__init__(self.goalbased_action)
 
     
     def goalbased_action(self, percept):
-        # A goal based search, where the goal is the Winning position i.e. positive_pos
+        # A goal based search, where the goal is the Winning position i.e. winning_pos
         # We will use the astar search to find the next move towards the goal
         global GAME_WON
 
@@ -330,7 +284,7 @@ class GoalBasedAgent(Agent):
 
 
 def generate_random_starting_positions(width, height):
-    # Generate random positions for obstacle, positive destination, negative destination, and the agent.
+    # Generate random positions for obstacle, winning destination, penalty destination, and the agent.
     occupied_positions = []
 
     obstacle_x = random.randint(0, width - 1)
@@ -359,20 +313,20 @@ def generate_random_starting_positions(width, height):
             break
 
     verbose_message(f"Obstacle location is   ({obstacle_x}, {obstacle_y})")
-    verbose_message(f"Positive location is   ({pos_x}, {pos_y})")
-    verbose_message(f"Negative location is   ({neg_x}, {neg_y})")
+    verbose_message(f"Winning location is    ({pos_x}, {pos_y})")
+    verbose_message(f"Penalty location is    ({neg_x}, {neg_y})")
     verbose_message(f"Agent location is      ({agent_x}, {agent_y})")
     verbose_message(f"Occupied positions are [{occupied_positions}]")
 
     return (obstacle_x, obstacle_y), (pos_x, pos_y), (neg_x, neg_y), (agent_x, agent_y), occupied_positions
 
 # Create and set up the environment
-def create_gridworld_environment(width, height, obstacle_pos, positive_pos, negative_pos):
+def create_gridworld_environment(width, height, obstacle_pos, winning_pos, penalty_pos):
     # Create the 2D grid world with the set width and height, and Things located at the specified positions
     env = GridWorldEnvironment(width, height)
     env.add_thing(Obstacle(), obstacle_pos)
-    env.add_thing(PositiveDestination(), positive_pos)
-    env.add_thing(NegativeDestination(), negative_pos)
+    env.add_thing(WinningDestination(), winning_pos)
+    env.add_thing(PenaltyDestination(), penalty_pos)
 
     return env
 
@@ -401,14 +355,9 @@ class GridSearchProblem(Problem):
     def result(self, state, action):
         """Return the new state after applying the action."""
         x, y = state
-        if action == 'up':
-            return (x, y + 1)
-        elif action == 'down':
-            return (x, y - 1)
-        elif action == 'left':
-            return (x - 1, y)
-        elif action == 'right':
-            return (x + 1, y)
+        if action in direction_to_coords:
+            dx, dy = direction_to_coords[action]
+            return (x + dx, y + dy)
         else:
             raise ValueError(f"Unknown action: {action}")
 
@@ -418,7 +367,12 @@ class GridSearchProblem(Problem):
 
     def path_cost(self, c, state1, action, state2):
         """Cost is the sum of x and y coordinates of the destination."""
-        return c + state2[0] + state2[1]
+        # print(f"Calculating cost c:{c} + state2[0]:{state2[0]} + state2[1]:{state2[1]}")
+
+        # if state1 == self.goal:
+        #     # 100 point bonus for reaching the goal
+        #     return 100
+        return  c + (state2[0] + state2[1])
 
 class GridSearchProblemWithHeuristic(GridSearchProblem):
     def h(self, node):
@@ -483,17 +437,17 @@ def building_your_world():
         return agent
 
     def goal_agent_factory():
-        obstacle_pos, positive_pos, negative_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
-        agent = GoalBasedAgent(agent_pos, positive_pos, negative_pos, obstacle_pos)
+        obstacle_pos, winning_pos, penalty_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
+        agent = GoalBasedAgent(agent_pos, winning_pos, penalty_pos, obstacle_pos)
         agent.__name__ = "GoalBasedAgent"
         return agent
 
     # Define the environment factory
     def env_factory_gridworld():
         # Generate random positions for obstacle, positive destination, and negative destination as well as an initial position for the agent
-        obstacle_pos, positive_pos, negative_pos, _, _ = generate_random_starting_positions(args.width, args.height)
-        # draw_grid(agent_pos, obstacle_pos, positive_pos, negative_pos)
-        return create_gridworld_environment(args.width, args.height, obstacle_pos, positive_pos, negative_pos)
+        obstacle_pos, winning_pos, penalty_pos, _, _ = generate_random_starting_positions(args.width, args.height)
+        # draw_grid(agent_pos, obstacle_pos, winning_pos, penalty_pos)
+        return create_gridworld_environment(args.width, args.height, obstacle_pos, winning_pos, penalty_pos)
 
     # List of agent factories for comparison 
     agent_factories = [
@@ -534,56 +488,146 @@ def building_your_world():
     print("AGENT RESULTS")    
     run_agent_comparison()
 
+def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True):
+    solution_stats = []
+    solution_totals = {'path_cost': 0, 'goal_tests': 0, 'states': 0, 'succs': 0}
+    
+    for i in range(runs):
+        obstacle_pos, winning_pos, penalty_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
+        
+        # Create appropriate problem type based on whether we need a heuristic
+        if use_heuristic:
+            problem = GridSearchProblemWithHeuristic(
+                initial=agent_pos,
+                goal=winning_pos,
+                width=args.width,
+                height=args.height,
+                obstacles=[obstacle_pos, penalty_pos]
+            )
+        else:
+            problem = GridSearchProblem(
+                initial=agent_pos,
+                goal=winning_pos,
+                width=args.width,
+                height=args.height,
+                obstacles=[obstacle_pos, penalty_pos]
+            )
+        
+        run_stat = {}
+        instrumented_problem = InstrumentedProblem(problem)
+        
+        # Call the appropriate search function
+        solution = None
+        try:
+            if search_type == "astar":
+                solution = astar_search(instrumented_problem, h=instrumented_problem.h)
+            elif search_type == "dls":
+                solution = depth_limited_search(instrumented_problem, limit=args.steps)
+            elif search_type == "rbfs":
+                solution = recursive_best_first_search(instrumented_problem, h=instrumented_problem.h)
+            elif search_type == "greedy":
+                solution = greedy_best_first_graph_search(instrumented_problem, f=instrumented_problem.h)
+            elif search_type == "bfs":
+                solution = breadth_first_graph_search(instrumented_problem)
+            elif search_type == "dfs":
+                solution = depth_first_graph_search(instrumented_problem)
+            elif search_type == "ucs":
+                solution = uniform_cost_search(instrumented_problem)
+        except RecursionError as e:
+            verbose_message(f"{algorithm_name} failed with: {e}")
+            continue
+        
+        if solution is not None:
+            run_stat['run_id'] = i
+            run_stat['path_cost'] = solution.path_cost
+            run_stat['goal_tests'] = instrumented_problem.goal_tests
+            run_stat['states'] = instrumented_problem.states
+            run_stat['succs'] = instrumented_problem.succs
+            
+            solution_totals['path_cost'] += solution.path_cost
+            solution_totals['goal_tests'] += instrumented_problem.goal_tests
+            solution_totals['states'] += instrumented_problem.states
+            solution_totals['succs'] += instrumented_problem.succs
+            
+            verbose_message(f" {algorithm_name} {run_stat}")
+            solution_stats.append(run_stat)
+        
+        # Clean up
+        del problem, instrumented_problem
+        if solution is not None:
+            del solution
+    
+    return solution_stats, solution_totals
 
 def searching_your_world():
+    # Uninformed searches
+    # Breadth First Search
+    _, solution_bfs_totals = run_search_experiment("BFS", args.runs, "bfs", use_heuristic=False)
+    # Depth First Search 
+    _, solution_dfs_totals = run_search_experiment("DFS", args.runs, "dfs", use_heuristic=False)
+    # Uniform Cost Search
+    _, solution_ucs_totals = run_search_experiment("UCS", args.runs, "ucs", use_heuristic=False)
 
-    obstacle_pos, positive_pos, negative_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
+    # Print results for uninformed searches
+    print("")
+    print(" UNINFORMED SEARCH   | COST | GOAL TESTS | STATES | ACTIONS ")
+    print("--------------------------------------------------------------")
+    print(f"Breadth First Search | "
+        f"{solution_bfs_totals['path_cost'] / args.runs:^5.2f}|"
+        f"{solution_bfs_totals['goal_tests'] / args.runs:^12.2f}|"
+        f"{solution_bfs_totals['states'] / args.runs:^8.2f}|"
+        f"{solution_bfs_totals['succs'] / args.runs:^9.2f}")
+    print(f"Depth First Search   | "
+        f"{solution_dfs_totals['path_cost'] / args.runs:^5.2f}|"
+        f"{solution_dfs_totals['goal_tests'] / args.runs:^12.2f}|"
+        f"{solution_dfs_totals['states'] / args.runs:^8.2f}|"
+        f"{solution_dfs_totals['succs'] / args.runs:^9.2f}")
+    print(f"Uniform Cost Search  | "
+        f"{solution_ucs_totals['path_cost'] / args.runs:^5.2f}|"
+        f"{solution_ucs_totals['goal_tests'] / args.runs:^12.2f}|"
+        f"{solution_ucs_totals['states'] / args.runs:^8.2f}|"
+        f"{solution_ucs_totals['succs'] / args.runs:^9.2f}")
+    
+    # Informaed searches
+    # A* Search
+    _, solution_astar_totals = run_search_experiment("A*", args.runs, "astar", use_heuristic=True)
+    # Depth Limited Search
+    _, solution_dls_totals = run_search_experiment("DLS", args.runs, "dls", use_heuristic=True)
+    print("")
+    print( " INFORMED SEARCH     | COST   | GOAL TESTS | STATES | ACTIONS ")
+    print("----------------------------------------------------------------")
+    print(f"A* Search            | "
+          f"{solution_astar_totals['path_cost'] / args.runs:^7.2f}|"
+          f"{solution_astar_totals['goal_tests'] / args.runs:^12.2f}|"
+          f"{solution_astar_totals['states'] / args.runs:^8.2f}|"
+          f"{solution_astar_totals['succs'] / args.runs:^9.2f}")
+    print(f"Depth Limited Search | "
+          f"{solution_dls_totals['path_cost'] / args.runs:^7.2f}|"
+          f"{solution_dls_totals['goal_tests'] / args.runs:^12.2f}|"
+          f"{solution_dls_totals['states'] / args.runs:^8.2f}|"
+          f"{solution_dls_totals['succs'] / args.runs:^9.2f}")
 
-    problem = GridSearchProblem(
-        initial=agent_pos,
-        goal=positive_pos,
-        width=args.width,
-        height=args.height,
-        obstacles=[obstacle_pos, negative_pos]
-    )
+    # Recursive Best First Search
+    try:
+        _, solution_rbfs_totals = run_search_experiment("RBFS", 1, "rbfs", use_heuristic=True)
+        print(f"Recurs Best 1st Srch | "
+            f"{solution_rbfs_totals['path_cost']:^7.2f}|"
+            f"{solution_rbfs_totals['goal_tests']:^12}|"
+            f"{solution_rbfs_totals['states']:^8}|"
+            f"{solution_rbfs_totals['succs']:^9}")
+    except Exception as e:
+        print(f"Recurs Best 1st Srch | {e}!")
 
-    solution_bfs = breadth_first_graph_search(problem)
-    solution_dfs = depth_first_graph_search(problem)
-    solution_ucs = uniform_cost_search(problem)
-
-    print("\nUNINFORMED SEARCH RESULTS")
-    print(f"=> Breadth First Search:     Cost: {solution_bfs.path_cost:5} solution {solution_bfs.solution()}  ")
-    print(f"=> Depth First Search  :     Cost: {solution_dfs.path_cost:5} solution {solution_dfs.solution()}  ")
-    print(f"=> Uniform Cost Search :     Cost: {solution_ucs.path_cost:5} solution {solution_ucs.solution()}  ")
-
-    problemInformed = GridSearchProblemWithHeuristic(
-        initial=agent_pos,
-        goal=positive_pos,
-        width=args.width,
-        height=args.height,
-        obstacles=[obstacle_pos, negative_pos]
-    )
-
-    problemInstrumented = InstrumentedProblem(problemInformed)
-
-    print("\nINFORMED SEARCH RESULTS")
-
-    solution_astar = astar_search(problemInstrumented, h=problemInformed.h)
-    print(f"=> A*:      Cost: {solution_astar.path_cost:5} Solution: {solution_astar.solution()}")
-
-    solution_rbfs = recursive_best_first_search(problemInstrumented, h=problemInformed.h)
-    print(f"=> RBFS:    Cost: {solution_rbfs.path_cost:5} Solution: {solution_rbfs.solution()}")
-
-    solution_greedy = greedy_best_first_graph_search(problemInstrumented, f=problemInformed.h)
-    if solution_greedy:
-        print(f"=> Greedy:  Cost: {solution_greedy.path_cost:5} Solution: {solution_greedy.solution()}")
+    # Greedy Best First Search
+    _, solution_greedy_totals = run_search_experiment("Greedy", 1, "greedy", use_heuristic=True)
+    if solution_greedy_totals:
+        print(f"Greedy Best 1st Srch | "
+            f"{solution_greedy_totals['path_cost']:^7.2f}|"
+            f"{solution_greedy_totals['goal_tests']:^12}|"
+            f"{solution_greedy_totals['states']:^8}|"
+            f"{solution_greedy_totals['succs']:^9}")
     else:
         print("=> Greedy:  No solution found")
-
-
-
-
-
 
 
 def print_args(args):
@@ -595,13 +639,12 @@ def print_args(args):
           f"          HEIGHT=> {args.height}\n"
           )
 
-
 if __name__ == "__main__":
     # command line arguments
     parser = argparse.ArgumentParser(description='A1_COMP9016_Nagle_JohnPaul_R00065426')
     parser.add_argument('-v', '--verbose', action='store_true', help='Print detailed movement and agent information')
     parser.add_argument('-s', '--steps', type=int, nargs='?', const=1, default=40, help='Number of Agent steps per run to attempt to win the game (agent only) (DEFAULT: 40)')
-    parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=500, help='Number of times to run each Agent (agent only) (DEFAULT: 10)')
+    parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=100, help='Number of times to run each Agent (agent only) (DEFAULT: 10)')
     parser.add_argument('-x', '--width', type=int, nargs='?', const=1, default=6, help='Width of the grid world (DEFAULT: 6)')
     parser.add_argument('-y', '--height', type=int, nargs='?', const=1, default=6, help='height of the grid world (DEFAULT: 6)')
     args = parser.parse_args()
