@@ -6,47 +6,7 @@ Student ID:   R00065426
 Class:        Knowledge Representation
 Assignment:   1
 
-The 2D world is comprised of a grid of blocks.
-There is one obstacle block that no agent can move to.
-An agent gets penalised points (sum of x and y co-ordinates) for making each move.
-An agent gets penalised 50 points if it lands on the penalty block
-If the agent reaches the winning block it gets 100 points, wins the game and the game ends.
-If the agent does not reach the winning block in the set number of moves, the game ends and the agent has lost the game.
-
-Here is an example map of the 2D world
-Obstacle location is   (1, 6)
-Winning location is   (4, 4)
-Penalty location is   (0, 4)
-Agent location is      (6, 5)
-
-7 . . . . . . . . 
-6 . O . . . . . . 
-5 . . . . . . A . 
-4 . . . . W . . . 
-3 P . . . . . . . 
-2 . . . . . . . . 
-1 . . . . . . . . 
-0 . . . . . . . . 
-  0 1 2 3 4 5 6 7
-
-AGENTS:
- - Random Agent, picks the next move randomly
- - Simple Reflex agent, always moves to the cheapest adjacent square.
- - Table based agent, uses a table to decide the next move
- - Goal based action. "current_location = Winning location" is the goal. We use a search algoithm to decide the next move
-
-UNINFORMED SEARCHES:
- - Breadth First Search
- - Depth First Search
- - Uniform Cost Search
-
-INFORMED SEARCHES:
-- Greedy Best First Search
-- A* Search i.e. Best First Graph Search
-- Recursive Best First Search
-
 """
-from operator import neg
 import sys
 import os
 import random
@@ -270,7 +230,8 @@ class GoalBasedAgent(Agent):
             goal=self.goal_location,
             width=args.width,
             height=args.height,
-            obstacles=[self.obstacle_location, self.penalty_location]
+            obstacles=[self.obstacle_location],
+            penalty_location=self.penalty_location
         )
         star_search_result = astar_search(problem)
 
@@ -304,6 +265,11 @@ def generate_random_starting_positions(width, height):
         if (neg_x, neg_y) not in occupied_positions:
             occupied_positions.append((neg_x, neg_y))
             break
+        # for x in range(width -1):
+        #     for y in range(height -1):
+        #         if random.random() < penalty_prob:
+        #             if (neg_x, neg_y) not in occupied_positions:
+        #                 occupied_positions.append((neg_x, neg_y))
 
     while True:
         agent_x = random.randint(0, width - 1)
@@ -332,11 +298,12 @@ def create_gridworld_environment(width, height, obstacle_pos, winning_pos, penal
 
 # Search
 class GridSearchProblem(Problem):
-    def __init__(self, initial, goal, width, height, obstacles):
+    def __init__(self, initial, goal, width, height, obstacles, penalty_location):
         super().__init__(initial, goal)
         self.width = width
         self.height = height
         self.obstacles = set(obstacles)
+        self.penalty_location = penalty_location
 
     def actions(self, state):
         """Return valid directions from the current state."""
@@ -368,13 +335,23 @@ class GridSearchProblem(Problem):
     def path_cost(self, c, state1, action, state2):
         """Cost is the sum of x and y coordinates of the destination."""
         # print(f"Calculating cost c:{c} + state2[0]:{state2[0]} + state2[1]:{state2[1]}")
+        cost = c + (state2[0] + state2[1])
 
-        # if state1 == self.goal:
-        #     # 100 point bonus for reaching the goal
-        #     return 100
-        return  c + (state2[0] + state2[1])
+        # Apply 100 point bonus for reaching the goal (subtract from cost)
+        if state2 == self.goal:
+            cost -= 100
+
+        # Apply 50 point penalty for landing on penalty square
+        if state2 == self.penalty_location:
+            cost += 50
+
+        return cost
 
 class GridSearchProblemWithHeuristic(GridSearchProblem):
+    def __init__(self, initial, goal, width, height, obstacles, penalty_location):
+        super().__init__(initial, goal, width, height, obstacles, penalty_location)
+
+
     def h(self, node):
         """Manhattan distance heuristic from current node to goal."""
         x1, y1 = node.state
@@ -462,6 +439,8 @@ def building_your_world():
         results = compare_agents(env_factory_gridworld, agent_factories, n=args.runs, steps=args.steps)
 
         agent_name = ''
+        print(" AGENTS               | COST   | % GAMES WON  | AVG TIME ")
+        print("---------------------------------------------------------")
         # Loop through the results and print each agent's name and average score
         for agent, stats in results:
             agent_name = stats[0]['agent']
@@ -480,29 +459,29 @@ def building_your_world():
                     f"{agent_results['time_taken']:.5f} seconds\t\t"
                     f"{agent_results['performance']}"
                     )
-            print(f"=> {agent_name}\t\t"
-            f"Games won: {(total_games_won / (total_games_won + total_games_lost)) * 100:.1f}%\t\t"
-            f"Average performance: {total_performance / len(stats):.2f}\t\t"
-            f"Average time taken: {total_time_taken / len(stats):.6f} seconds")
-
-    print("AGENT RESULTS")    
+            print(f"{agent_name:<22}|"
+                  f"{-total_performance / len(stats):^8.2f}|"
+                  f"{(total_games_won / (total_games_won + total_games_lost)):^14.1%}|"
+                  f"{total_time_taken / len(stats):^11.6f}")
+  
     run_agent_comparison()
 
 def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True):
     solution_stats = []
-    solution_totals = {'path_cost': 0, 'goal_tests': 0, 'states': 0, 'succs': 0}
+    solution_totals = {'path_cost': 0, 'goal_tests': 0, 'states': 0, 'succs': 0, 'time_taken': 0.0}
     
     for i in range(runs):
         obstacle_pos, winning_pos, penalty_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
         
-        # Create appropriate problem type based on whether we need a heuristic
+        # Create appropriate problem type based on whether or not we need a heuristic
         if use_heuristic:
             problem = GridSearchProblemWithHeuristic(
                 initial=agent_pos,
                 goal=winning_pos,
                 width=args.width,
                 height=args.height,
-                obstacles=[obstacle_pos, penalty_pos]
+                obstacles=[obstacle_pos],
+                penalty_location=penalty_pos
             )
         else:
             problem = GridSearchProblem(
@@ -510,7 +489,8 @@ def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True)
                 goal=winning_pos,
                 width=args.width,
                 height=args.height,
-                obstacles=[obstacle_pos, penalty_pos]
+                obstacles=[obstacle_pos],
+                penalty_location=penalty_pos
             )
         
         run_stat = {}
@@ -518,6 +498,7 @@ def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True)
         
         # Call the appropriate search function
         solution = None
+        start_time = time.time()
         try:
             if search_type == "astar":
                 solution = astar_search(instrumented_problem, h=instrumented_problem.h)
@@ -533,6 +514,8 @@ def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True)
                 solution = depth_first_graph_search(instrumented_problem)
             elif search_type == "ucs":
                 solution = uniform_cost_search(instrumented_problem)
+            end_time = time.time()
+            elapsed_time = end_time - start_time
         except RecursionError as e:
             verbose_message(f"{algorithm_name} failed with: {e}")
             continue
@@ -543,11 +526,13 @@ def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True)
             run_stat['goal_tests'] = instrumented_problem.goal_tests
             run_stat['states'] = instrumented_problem.states
             run_stat['succs'] = instrumented_problem.succs
-            
+            run_stat['time_taken'] = elapsed_time
+
             solution_totals['path_cost'] += solution.path_cost
             solution_totals['goal_tests'] += instrumented_problem.goal_tests
             solution_totals['states'] += instrumented_problem.states
             solution_totals['succs'] += instrumented_problem.succs
+            solution_totals['time_taken'] += elapsed_time
             
             verbose_message(f" {algorithm_name} {run_stat}")
             solution_stats.append(run_stat)
@@ -570,42 +555,48 @@ def searching_your_world():
 
     # Print results for uninformed searches
     print("")
-    print(" UNINFORMED SEARCH   | COST | GOAL TESTS | STATES | ACTIONS ")
-    print("--------------------------------------------------------------")
+    print(" UNINFORMED SEARCH   | COST   | GOAL TESTS | STATES | ACTIONS | AVG TIME")
+    print("-------------------------------------------------------------------------")
     print(f"Breadth First Search | "
-        f"{solution_bfs_totals['path_cost'] / args.runs:^5.2f}|"
+        f"{solution_bfs_totals['path_cost'] / args.runs:^7.2f}|"
         f"{solution_bfs_totals['goal_tests'] / args.runs:^12.2f}|"
         f"{solution_bfs_totals['states'] / args.runs:^8.2f}|"
-        f"{solution_bfs_totals['succs'] / args.runs:^9.2f}")
+        f"{solution_bfs_totals['succs'] / args.runs:^9.2f}|"
+        f"{solution_bfs_totals['time_taken'] / args.runs:^11.6f}")
     print(f"Depth First Search   | "
-        f"{solution_dfs_totals['path_cost'] / args.runs:^5.2f}|"
+        f"{solution_dfs_totals['path_cost'] / args.runs:^7.2f}|"
         f"{solution_dfs_totals['goal_tests'] / args.runs:^12.2f}|"
         f"{solution_dfs_totals['states'] / args.runs:^8.2f}|"
-        f"{solution_dfs_totals['succs'] / args.runs:^9.2f}")
+        f"{solution_dfs_totals['succs'] / args.runs:^9.2f}|"
+        f"{solution_dfs_totals['time_taken'] / args.runs:^11.6f}")
     print(f"Uniform Cost Search  | "
-        f"{solution_ucs_totals['path_cost'] / args.runs:^5.2f}|"
+        f"{solution_ucs_totals['path_cost'] / args.runs:^7.2f}|"
         f"{solution_ucs_totals['goal_tests'] / args.runs:^12.2f}|"
         f"{solution_ucs_totals['states'] / args.runs:^8.2f}|"
-        f"{solution_ucs_totals['succs'] / args.runs:^9.2f}")
+        f"{solution_ucs_totals['succs'] / args.runs:^9.2f}|"
+        f"{solution_ucs_totals['time_taken'] / args.runs:^11.6f}")
     
-    # Informaed searches
+    # Informed searches
     # A* Search
     _, solution_astar_totals = run_search_experiment("A*", args.runs, "astar", use_heuristic=True)
     # Depth Limited Search
     _, solution_dls_totals = run_search_experiment("DLS", args.runs, "dls", use_heuristic=True)
+    # Print results
     print("")
-    print( " INFORMED SEARCH     | COST   | GOAL TESTS | STATES | ACTIONS ")
-    print("----------------------------------------------------------------")
+    print( " INFORMED SEARCH     | COST   | GOAL TESTS | STATES | ACTIONS | AVG TIME")
+    print("-------------------------------------------------------------------------")
     print(f"A* Search            | "
           f"{solution_astar_totals['path_cost'] / args.runs:^7.2f}|"
           f"{solution_astar_totals['goal_tests'] / args.runs:^12.2f}|"
           f"{solution_astar_totals['states'] / args.runs:^8.2f}|"
-          f"{solution_astar_totals['succs'] / args.runs:^9.2f}")
+          f"{solution_astar_totals['succs'] / args.runs:^9.2f}|"
+          f"{solution_astar_totals['time_taken'] / args.runs:^11.6f}")
     print(f"Depth Limited Search | "
           f"{solution_dls_totals['path_cost'] / args.runs:^7.2f}|"
           f"{solution_dls_totals['goal_tests'] / args.runs:^12.2f}|"
           f"{solution_dls_totals['states'] / args.runs:^8.2f}|"
-          f"{solution_dls_totals['succs'] / args.runs:^9.2f}")
+          f"{solution_dls_totals['succs'] / args.runs:^9.2f}|"
+          f"{solution_dls_totals['time_taken'] / args.runs:^11.6f}")
 
     # Recursive Best First Search
     try:
@@ -614,7 +605,8 @@ def searching_your_world():
             f"{solution_rbfs_totals['path_cost']:^7.2f}|"
             f"{solution_rbfs_totals['goal_tests']:^12}|"
             f"{solution_rbfs_totals['states']:^8}|"
-            f"{solution_rbfs_totals['succs']:^9}")
+            f"{solution_rbfs_totals['succs']:^9}|"
+            f"{solution_rbfs_totals['time_taken']:^11.6f}")
     except Exception as e:
         print(f"Recurs Best 1st Srch | {e}!")
 
@@ -625,7 +617,8 @@ def searching_your_world():
             f"{solution_greedy_totals['path_cost']:^7.2f}|"
             f"{solution_greedy_totals['goal_tests']:^12}|"
             f"{solution_greedy_totals['states']:^8}|"
-            f"{solution_greedy_totals['succs']:^9}")
+            f"{solution_greedy_totals['succs']:^9}|"
+            f"{solution_greedy_totals['time_taken']:^11.6f}")
     else:
         print("=> Greedy:  No solution found")
 
