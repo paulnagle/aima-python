@@ -203,7 +203,7 @@ class GridWorldEnvironment(XYEnvironment):
         penalty_destination = self.list_things_at(agent.location, PenaltyDestination)
         if penalty_destination:
             agent.performance -= 50
-            verbose_message(f"😭 You have reached the penalty destination!             : Performance penalty:   50  Performance Total: {agent.performance:4}")
+            verbose_message(f"😭 You have reached a penalty destination!               : Performance penalty:   50  Performance Total: {agent.performance:4}")
 
     def is_done(self):
         """ The environment is done if the agent has won the game"""
@@ -347,10 +347,6 @@ def extract_locations_from_env(env):
             winning_pos = loc
         elif isinstance(thing, Obstacle):
             obstacle_pos = loc
-    
-    # For backward compatibility, if there's only one penalty position, return it directly
-    # Otherwise, return the list of penalty positions
-    penalty_pos = penalty_positions[0] if penalty_positions else None
     
     return penalty_positions, winning_pos, obstacle_pos, occupied_positions
 
