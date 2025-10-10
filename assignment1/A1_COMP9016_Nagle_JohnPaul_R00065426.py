@@ -111,8 +111,10 @@ class GridWorldEnvironment(XYEnvironment):
         obstacle_positions = []
         for thing in self.things:
             if isinstance(thing, Obstacle):
-                if hasattr(thing, 'location') and thing.location is not None:
-                    obstacle_positions.append(thing.location)
+                # In XYEnvironment, all things get a location attribute when added
+                loc = getattr(thing, 'location', None)
+                if loc is not None:
+                    obstacle_positions.append(loc)
 
         available_moves_with_costs = self.get_available_moves_with_costs(x, y, self.width, self.height, obstacle_positions)
         return available_moves_with_costs
@@ -146,9 +148,10 @@ class GridWorldEnvironment(XYEnvironment):
         obstacle_positions = []
         for thing in self.things:
             if isinstance(thing, Obstacle):
-                # Safely get location if it exists
-                if hasattr(thing, 'location') and thing.location is not None:
-                    obstacle_positions.append(thing.location)
+                # In XYEnvironment, all things get a location attribute when added
+                loc = getattr(thing, 'location', None)
+                if loc is not None:
+                    obstacle_positions.append(loc)
 
         # Check if move is valid
         if not action:
@@ -315,7 +318,7 @@ def test_agent(AgentFactory, steps, envs):
         end_time = time.time()
         elapsed_time = end_time - start_time
 
-        run_stat['agent'] = agent.__name__
+        run_stat['agent'] = agent.__class__.__name__
         run_stat['time_taken'] = elapsed_time
         run_stat['performance'] = agent.performance
         run_stat['game_won'] = GAME_WON
@@ -335,24 +338,43 @@ def building_your_world():
     # Define factories for the agents
     def random_agent_factory():
         agent = RandomAgent()
-        agent.__name__ = "RandomAgent"
         return agent
 
     def reflex_agent_factory():
         agent = ReflexAgent()
-        agent.__name__ = "ReflexAgent"
         return agent
 
     def table_agent_factory():
-        agent = TableDrivenAgent()      
-        agent.__name__ = "TableDrivenAgent"
+        agent = TableDrivenAgent()
         return agent
 
+    def extract_locations_from_env(env):
+        penalty_pos = winning_pos = obstacle_pos = None
+        occupied_positions = []
+        for thing in env.things:
+            loc = getattr(thing, 'location', None)
+            occupied_positions.append(loc)
+            if isinstance(thing, PenaltyDestination):
+                penalty_pos = loc
+            elif isinstance(thing, WinningDestination):
+                winning_pos = loc
+            elif isinstance(thing, Obstacle):
+                obstacle_pos = loc
+        
+        return penalty_pos, winning_pos, obstacle_pos, occupied_positions
+
     def goal_agent_factory():
-        # Generate positions for the agent and get positions of other objects
-        obstacle_pos, winning_pos, penalty_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
+        # Create a GridWorldEnvironment and extract positions from it
+        env = GridWorldEnvironment(args.width, args.height)
+        penalty_pos, winning_pos, obstacle_pos, occupied_positions = extract_locations_from_env(env)
+
+        while True:
+            agent_x = random.randint(0, args.width - 1)
+            agent_y = random.randint(0, args.height - 1)
+            agent_pos = (agent_x, agent_y)
+            if agent_pos not in occupied_positions:
+                break
         agent = GoalBasedAgent(agent_pos, winning_pos, penalty_pos, obstacle_pos)
-        agent.__name__ = "GoalBasedAgent"
         return agent
 
     # Define the environment factory
@@ -370,14 +392,14 @@ def building_your_world():
 
     def run_agent_comparison():
         # Run the comparison between the agents
-        results = compare_agents(env_factory_gridworld, agent_factories, n=args.runs, steps=args.steps)
+        results = compare_agents(env_factory_gridworld, agent_factories, numEnvs=args.runs, steps=args.steps)
 
         agent_name = ''
         print(" AGENTS               | COST   | % GAMES WON  | AVG TIME ")
         print("---------------------------------------------------------")
         # Loop through the results and print each agent's name and average score
         for agent, stats in results:
-            agent_name = stats[0]['agent']
+            agent_name = stats[0]['agent'] if stats and len(stats) > 0 else "Unknown"
             verbose_message("Result:\t\tTime:\t\tPerformance:")
             total_games_won = total_games_lost = total_time_taken = total_performance = 0
             
@@ -458,6 +480,9 @@ class GridSearchProblemWithHeuristic(GridSearchProblem):
     def h(self, node):
         """Manhattan distance heuristic from current node to goal."""
         x1, y1 = node.state
+        # Ensure goal is not None before unpacking
+        if self.goal is None:
+            return 0
         x2, y2 = self.goal
         return abs(x2 - x1) + abs(y2 - y1)
 
@@ -524,7 +549,9 @@ def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True)
             run_stat['succs'] = instrumented_problem.succs
             run_stat['time_taken'] = elapsed_time
 
-            solution_totals['path_cost'] += solution.path_cost
+            # Handle the case where solution might be 'cutoff' from depth_limited_search
+            if solution != 'cutoff' and hasattr(solution, 'path_cost'):
+                solution_totals['path_cost'] += solution.path_cost
             solution_totals['goal_tests'] += instrumented_problem.goal_tests
             solution_totals['states'] += instrumented_problem.states
             solution_totals['succs'] += instrumented_problem.succs
