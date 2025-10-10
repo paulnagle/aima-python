@@ -23,7 +23,7 @@ if parent_dir not in sys.path:
 
 # Now you can import a module from the parent directory
 from agents import Thing, XYEnvironment, Agent, Obstacle
-from search import Problem, InstrumentedProblem, depth_limited_search, name, print_table, breadth_first_graph_search, depth_first_graph_search, uniform_cost_search, greedy_best_first_graph_search, astar_search, recursive_best_first_search
+from search import Problem, InstrumentedProblem, depth_limited_search, breadth_first_graph_search, depth_first_graph_search, uniform_cost_search, greedy_best_first_graph_search, astar_search, recursive_best_first_search
 
 GAME_WON=False
 
@@ -53,6 +53,14 @@ class GridWorldEnvironment(XYEnvironment):
         super().__init__(width, height)
         self.width = width
         self.height = height
+        
+        # Generate random positions for obstacle, winning destination, penalty destination, and agent
+        obstacle_pos, winning_pos, penalty_pos, _, _ = generate_random_starting_positions(width, height)
+        
+        # Add things to the environment
+        self.add_thing(Obstacle(), obstacle_pos)
+        self.add_thing(WinningDestination(), winning_pos)
+        self.add_thing(PenaltyDestination(), penalty_pos)
 
     def percept(self, agent):
         # A list of available movements from the agent's current location and the associated cost
@@ -286,15 +294,6 @@ def generate_random_starting_positions(width, height):
 
     return (obstacle_x, obstacle_y), (pos_x, pos_y), (neg_x, neg_y), (agent_x, agent_y), occupied_positions
 
-# Create and set up the environment
-def create_gridworld_environment(width, height, obstacle_pos, winning_pos, penalty_pos):
-    # Create the 2D grid world with the set width and height, and Things located at the specified positions
-    env = GridWorldEnvironment(width, height)
-    env.add_thing(Obstacle(), obstacle_pos)
-    env.add_thing(WinningDestination(), winning_pos)
-    env.add_thing(PenaltyDestination(), penalty_pos)
-
-    return env
 
 # Search
 class GridSearchProblem(Problem):
@@ -333,8 +332,8 @@ class GridSearchProblem(Problem):
         return state == self.goal
 
     def path_cost(self, c, state1, action, state2):
-        """Cost is the sum of x and y coordinates of the destination."""
-        # print(f"Calculating cost c:{c} + state2[0]:{state2[0]} + state2[1]:{state2[1]}")
+        """Cost is the sum of x and y coordinates of the destination, plus 50 for a penalty
+        position, and minus 100 for winning the game."""
         cost = c + (state2[0] + state2[1])
 
         # Apply 100 point bonus for reaching the goal (subtract from cost)
@@ -414,6 +413,7 @@ def building_your_world():
         return agent
 
     def goal_agent_factory():
+        # Generate positions for the agent and get positions of other objects
         obstacle_pos, winning_pos, penalty_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
         agent = GoalBasedAgent(agent_pos, winning_pos, penalty_pos, obstacle_pos)
         agent.__name__ = "GoalBasedAgent"
@@ -421,10 +421,8 @@ def building_your_world():
 
     # Define the environment factory
     def env_factory_gridworld():
-        # Generate random positions for obstacle, positive destination, and negative destination as well as an initial position for the agent
-        obstacle_pos, winning_pos, penalty_pos, _, _ = generate_random_starting_positions(args.width, args.height)
-        # draw_grid(agent_pos, obstacle_pos, winning_pos, penalty_pos)
-        return create_gridworld_environment(args.width, args.height, obstacle_pos, winning_pos, penalty_pos)
+        # Create a new GridWorldEnvironment with the specified width and height
+        return GridWorldEnvironment(args.width, args.height)
 
     # List of agent factories for comparison 
     agent_factories = [
@@ -471,6 +469,7 @@ def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True)
     solution_totals = {'path_cost': 0, 'goal_tests': 0, 'states': 0, 'succs': 0, 'time_taken': 0.0}
     
     for i in range(runs):
+        # Generate random positions for obstacle, winning destination, penalty destination, and agent
         obstacle_pos, winning_pos, penalty_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
         
         # Create appropriate problem type based on whether or not we need a heuristic
@@ -624,13 +623,10 @@ def searching_your_world():
 
 
 def print_args(args):
-    print("\n*** Pass the -h parameter to see details on how to configure the arguments ***")
-    print("\nCURRENT ARGUMENTS:"
-          f"          STEPS=> {args.steps}"
-          f"          RUNS=> {args.runs}"
-          f"          WIDTH=> {args.width}"
-          f"          HEIGHT=> {args.height}\n"
-          )
+    print("\n*** Pass the -h parameter to see details on how to configure the parameters ***\n")
+    print(" PARAMETER | STEPS   | RUNS   | WIDTH  | HEIGHT")
+    print("-----------|---------|--------|--------|-------")
+    print(f" VALUE     | {args.steps:^7} | {args.runs:^6} | {args.width:^6} | {args.height:^6}\n")
 
 if __name__ == "__main__":
     # command line arguments
