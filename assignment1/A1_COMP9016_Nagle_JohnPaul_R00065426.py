@@ -39,6 +39,49 @@ def verbose_message(message):
     if args.verbose:
         print(message)
 
+def generate_random_starting_positions(width, height):
+    # Generate random positions for obstacle, winning destination, penalty destination, and the agent.
+    occupied_positions = []
+
+    obstacle_x = random.randint(0, width - 1)
+    obstacle_y = random.randint(0, height - 1)
+    occupied_positions.append((obstacle_x, obstacle_y))
+
+    while True:
+        win_x = random.randint(0, width - 1)
+        win_y = random.randint(0, height - 1)
+        if (win_x, win_y) not in occupied_positions:
+            occupied_positions.append((win_x, win_y))
+            break
+
+    while True:
+        penalty_x = random.randint(0, width - 1)
+        penalty_y = random.randint(0, height - 1)
+        if (penalty_x, penalty_y) not in occupied_positions:
+            occupied_positions.append((penalty_x, penalty_y))
+            break
+        # for x in range(width -1):
+        #     for y in range(height -1):
+        #         if random.random() < penalty_prob:
+        #             if (neg_x, neg_y) not in occupied_positions:
+        #                 occupied_positions.append((neg_x, neg_y))
+
+    while True:
+        agent_x = random.randint(0, width - 1)
+        agent_y = random.randint(0, height - 1)
+        if (agent_x, agent_y) not in occupied_positions:
+            occupied_positions.append((agent_x, agent_y))
+            break
+
+    verbose_message(f"Obstacle location is   ({obstacle_x}, {obstacle_y})")
+    verbose_message(f"Winning location is    ({win_x}, {win_y})")
+    verbose_message(f"Penalty location is    ({penalty_x}, {penalty_y})")
+    verbose_message(f"Agent location is      ({agent_x}, {agent_y})")
+    verbose_message(f"Occupied positions are [{occupied_positions}]")
+
+    return (obstacle_x, obstacle_y), (win_x, win_y), (penalty_x, penalty_y), (agent_x, agent_y), occupied_positions
+
+# Env
 class WinningDestination(Thing):
     """ A destination that awards 100 points and wins the game when an agent reaches it """
     pass
@@ -161,6 +204,7 @@ class GridWorldEnvironment(XYEnvironment):
         global GAME_WON
         return GAME_WON or super().is_done()
 
+# Agents
 class RandomAgent(Agent):
     # A simple agent program that moves randomly.
     def __init__(self):
@@ -180,7 +224,7 @@ class ReflexAgent(Agent):
         return cheapest[0]
 
 class TableDrivenAgent(Agent):
-    # A table driven agent that uses a pre-calculated table to determine the best action to take.
+    # A table driven agent that uses a pre-calculated table to determine the action to take.
     def __init__(self):
         super().__init__(self.table_action)
 
@@ -227,7 +271,6 @@ class GoalBasedAgent(Agent):
         self.obstacle_location = obstacle_pos
         super().__init__(self.goalbased_action)
 
-    
     def goalbased_action(self, percept):
         # A goal based search, where the goal is the Winning position i.e. winning_pos
         # We will use the astar search to find the next move towards the goal
@@ -251,121 +294,14 @@ class GoalBasedAgent(Agent):
             
         return star_search_result.action
 
-
-def generate_random_starting_positions(width, height):
-    # Generate random positions for obstacle, winning destination, penalty destination, and the agent.
-    occupied_positions = []
-
-    obstacle_x = random.randint(0, width - 1)
-    obstacle_y = random.randint(0, height - 1)
-    occupied_positions.append((obstacle_x, obstacle_y))
-
-    while True:
-        pos_x = random.randint(0, width - 1)
-        pos_y = random.randint(0, height - 1)
-        if (pos_x, pos_y) not in occupied_positions:
-            occupied_positions.append((pos_x, pos_y))
-            break
-
-    while True:
-        neg_x = random.randint(0, width - 1)
-        neg_y = random.randint(0, height - 1)
-        if (neg_x, neg_y) not in occupied_positions:
-            occupied_positions.append((neg_x, neg_y))
-            break
-        # for x in range(width -1):
-        #     for y in range(height -1):
-        #         if random.random() < penalty_prob:
-        #             if (neg_x, neg_y) not in occupied_positions:
-        #                 occupied_positions.append((neg_x, neg_y))
-
-    while True:
-        agent_x = random.randint(0, width - 1)
-        agent_y = random.randint(0, height - 1)
-        if (agent_x, agent_y) not in occupied_positions:
-            occupied_positions.append((agent_x, agent_y))
-            break
-
-    verbose_message(f"Obstacle location is   ({obstacle_x}, {obstacle_y})")
-    verbose_message(f"Winning location is    ({pos_x}, {pos_y})")
-    verbose_message(f"Penalty location is    ({neg_x}, {neg_y})")
-    verbose_message(f"Agent location is      ({agent_x}, {agent_y})")
-    verbose_message(f"Occupied positions are [{occupied_positions}]")
-
-    return (obstacle_x, obstacle_y), (pos_x, pos_y), (neg_x, neg_y), (agent_x, agent_y), occupied_positions
-
-
-# Search
-class GridSearchProblem(Problem):
-    def __init__(self, initial, goal, width, height, obstacles, penalty_location):
-        super().__init__(initial, goal)
-        self.width = width
-        self.height = height
-        self.obstacles = set(obstacles)
-        self.penalty_location = penalty_location
-
-    def actions(self, state):
-        """Return valid directions from the current state."""
-        x, y = state
-        directions = []
-        if y + 1 < self.height and (x, y + 1) not in self.obstacles:
-            directions.append('up')
-        if y > 0 and (x, y - 1) not in self.obstacles:
-            directions.append('down')
-        if x > 0 and (x - 1, y) not in self.obstacles:
-            directions.append('left')
-        if x + 1 < self.width and (x + 1, y) not in self.obstacles:
-            directions.append('right')
-        return directions
-
-    def result(self, state, action):
-        """Return the new state after applying the action."""
-        x, y = state
-        if action in direction_to_coords:
-            dx, dy = direction_to_coords[action]
-            return (x + dx, y + dy)
-        else:
-            raise ValueError(f"Unknown action: {action}")
-
-    def goal_test(self, state):
-        """Check if the current state is the goal."""
-        return state == self.goal
-
-    def path_cost(self, c, state1, action, state2):
-        """Cost is the sum of x and y coordinates of the destination, plus 50 for a penalty
-        position, and minus 100 for winning the game."""
-        cost = c + (state2[0] + state2[1])
-
-        # Apply 100 point bonus for reaching the goal (subtract from cost)
-        if state2 == self.goal:
-            cost -= 100
-
-        # Apply 50 point penalty for landing on penalty square
-        if state2 == self.penalty_location:
-            cost += 50
-
-        return cost
-
-class GridSearchProblemWithHeuristic(GridSearchProblem):
-    def __init__(self, initial, goal, width, height, obstacles, penalty_location):
-        super().__init__(initial, goal, width, height, obstacles, penalty_location)
-
-
-    def h(self, node):
-        """Manhattan distance heuristic from current node to goal."""
-        x1, y1 = node.state
-        x2, y2 = self.goal
-        return abs(x2 - x1) + abs(y2 - y1)
-
-def compare_agents(EnvFactory, AgentFactories, n, steps):
+def compare_agents(EnvFactory, AgentFactories, numEnvs, steps):
     """See how well each of several agents do in n instances of an environment."""
-    envs = [EnvFactory() for i in range(n)]
+    envs = [EnvFactory() for i in range(numEnvs)]
     results = [(agent, test_agent(agent, steps, copy.deepcopy(envs))) for agent in AgentFactories]
     return results
 
 def test_agent(AgentFactory, steps, envs):
-    """Return the mean score of running an agent in each of the envs, for steps
-    """
+    """Return the stats of running an agent in each of the envs, for steps """
     def score(env):
         global GAME_WON
         run_stat = {}
@@ -464,6 +400,67 @@ def building_your_world():
   
     run_agent_comparison()
 
+# Search
+class GridSearchProblem(Problem):
+    def __init__(self, initial, goal, width, height, obstacles, penalty_location):
+        super().__init__(initial, goal)
+        self.width = width
+        self.height = height
+        self.obstacles = set(obstacles)
+        self.penalty_location = penalty_location
+
+    def actions(self, state):
+        """Return valid directions from the current state."""
+        x, y = state
+        directions = []
+        if y + 1 < self.height and (x, y + 1) not in self.obstacles:
+            directions.append('up')
+        if y > 0 and (x, y - 1) not in self.obstacles:
+            directions.append('down')
+        if x > 0 and (x - 1, y) not in self.obstacles:
+            directions.append('left')
+        if x + 1 < self.width and (x + 1, y) not in self.obstacles:
+            directions.append('right')
+        return directions
+
+    def result(self, state, action):
+        """Return the new state after applying the action."""
+        x, y = state
+        if action in direction_to_coords:
+            dx, dy = direction_to_coords[action]
+            return (x + dx, y + dy)
+        else:
+            raise ValueError(f"Unknown action: {action}")
+
+    def goal_test(self, state):
+        """Check if the current state is the goal."""
+        return state == self.goal
+
+    def path_cost(self, c, state1, action, state2):
+        """Cost is the sum of x and y coordinates of the destination, plus 50 for a penalty
+        position, and minus 100 for winning the game."""
+        cost = c + (state2[0] + state2[1])
+
+        # Apply 100 point bonus for reaching the goal (subtract from cost)
+        if state2 == self.goal:
+            cost -= 100
+
+        # Apply 50 point penalty for landing on penalty square
+        if state2 == self.penalty_location:
+            cost += 50
+
+        return cost
+
+class GridSearchProblemWithHeuristic(GridSearchProblem):
+    def __init__(self, initial, goal, width, height, obstacles, penalty_location):
+        super().__init__(initial, goal, width, height, obstacles, penalty_location)
+
+    def h(self, node):
+        """Manhattan distance heuristic from current node to goal."""
+        x1, y1 = node.state
+        x2, y2 = self.goal
+        return abs(x2 - x1) + abs(y2 - y1)
+
 def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True):
     solution_stats = []
     solution_totals = {'path_cost': 0, 'goal_tests': 0, 'states': 0, 'succs': 0, 'time_taken': 0.0}
@@ -551,6 +548,8 @@ def searching_your_world():
     _, solution_dfs_totals = run_search_experiment("DFS", args.runs, "dfs", use_heuristic=False)
     # Uniform Cost Search
     _, solution_ucs_totals = run_search_experiment("UCS", args.runs, "ucs", use_heuristic=False)
+    # Depth Limited Search
+    _, solution_dls_totals = run_search_experiment("DLS", args.runs, "dls", use_heuristic=False)
 
     # Print results for uninformed searches
     print("")
@@ -574,12 +573,18 @@ def searching_your_world():
         f"{solution_ucs_totals['states'] / args.runs:^8.2f}|"
         f"{solution_ucs_totals['succs'] / args.runs:^9.2f}|"
         f"{solution_ucs_totals['time_taken'] / args.runs:^11.6f}")
-    
+    print(f"Depth Limited Search | "
+          f"{solution_dls_totals['path_cost'] / args.runs:^7.2f}|"
+          f"{solution_dls_totals['goal_tests'] / args.runs:^12.2f}|"
+          f"{solution_dls_totals['states'] / args.runs:^8.2f}|"
+          f"{solution_dls_totals['succs'] / args.runs:^9.2f}|"
+          f"{solution_dls_totals['time_taken'] / args.runs:^11.6f}")
+
+
     # Informed searches
     # A* Search
     _, solution_astar_totals = run_search_experiment("A*", args.runs, "astar", use_heuristic=True)
-    # Depth Limited Search
-    _, solution_dls_totals = run_search_experiment("DLS", args.runs, "dls", use_heuristic=True)
+
     # Print results
     print("")
     print( " INFORMED SEARCH     | COST   | GOAL TESTS | STATES | ACTIONS | AVG TIME")
@@ -590,12 +595,6 @@ def searching_your_world():
           f"{solution_astar_totals['states'] / args.runs:^8.2f}|"
           f"{solution_astar_totals['succs'] / args.runs:^9.2f}|"
           f"{solution_astar_totals['time_taken'] / args.runs:^11.6f}")
-    print(f"Depth Limited Search | "
-          f"{solution_dls_totals['path_cost'] / args.runs:^7.2f}|"
-          f"{solution_dls_totals['goal_tests'] / args.runs:^12.2f}|"
-          f"{solution_dls_totals['states'] / args.runs:^8.2f}|"
-          f"{solution_dls_totals['succs'] / args.runs:^9.2f}|"
-          f"{solution_dls_totals['time_taken'] / args.runs:^11.6f}")
 
     # Recursive Best First Search
     try:
@@ -621,7 +620,6 @@ def searching_your_world():
     else:
         print("=> Greedy:  No solution found")
 
-
 def print_args(args):
     print("\n*** Pass the -h parameter to see details on how to configure the parameters ***\n")
     print(" PARAMETER | STEPS   | RUNS   | WIDTH  | HEIGHT")
@@ -633,7 +631,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='A1_COMP9016_Nagle_JohnPaul_R00065426')
     parser.add_argument('-v', '--verbose', action='store_true', help='Print detailed movement and agent information')
     parser.add_argument('-s', '--steps', type=int, nargs='?', const=1, default=40, help='Number of Agent steps per run to attempt to win the game (agent only) (DEFAULT: 40)')
-    parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=100, help='Number of times to run each Agent (agent only) (DEFAULT: 10)')
+    parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=500, help='Number of times to run each Agent (agent only) (DEFAULT: 10)')
     parser.add_argument('-x', '--width', type=int, nargs='?', const=1, default=6, help='Width of the grid world (DEFAULT: 6)')
     parser.add_argument('-y', '--height', type=int, nargs='?', const=1, default=6, help='height of the grid world (DEFAULT: 6)')
     args = parser.parse_args()
