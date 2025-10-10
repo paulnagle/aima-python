@@ -23,10 +23,13 @@ if parent_dir not in sys.path:
 
 # Now you can import a module from the parent directory
 from agents import Thing, XYEnvironment, Agent, Obstacle
-from search import Problem, InstrumentedProblem, depth_limited_search, breadth_first_graph_search, depth_first_graph_search, uniform_cost_search, greedy_best_first_graph_search, astar_search, recursive_best_first_search
+from search import Problem, InstrumentedProblem 
+from search import depth_limited_search, breadth_first_graph_search, depth_first_graph_search, uniform_cost_search, greedy_best_first_graph_search, astar_search, recursive_best_first_search
 
+# Global to store current game result
 GAME_WON=False
 
+# Handy for calculating grid movements
 direction_to_coords = {
     'up': (0, 1),
     'down': (0, -1),
@@ -54,7 +57,7 @@ def generate_random_starting_positions(width, height):
             occupied_positions.append((win_x, win_y))
             break
 
-    # Place penalty blocks randomly
+    # Place penalty blocks randomly based on the penalty_prob parameter
     penalty_positions = []
     for x in range(width):
         for y in range(height):
@@ -88,13 +91,13 @@ class PenaltyDestination(Thing):
     pass
 
 class GridWorldEnvironment(XYEnvironment):
-    """ This environment has a grid of rows and columns with obstacles """
+    """ This environment has a grid of rows and columns with obstacles and penalty blocks"""
     def __init__(self, width, height):
         super().__init__(width, height)
         self.width = width
         self.height = height
         
-        # Generate random positions for obstacle, winning destination, penalty destinations, and agent
+        # Generate random positions for obstacle, winning destination and penalty destinations
         obstacle_pos, winning_pos, penalty_positions, _, _ = generate_random_starting_positions(width, height)
         
         # Add things to the environment
@@ -187,7 +190,7 @@ class GridWorldEnvironment(XYEnvironment):
         # Check if agent has landed on the winning or penalty squares
         global GAME_WON
 
-        # Check for winninf destination
+        # Check for winning destination
         winning_destinations = self.list_things_at(agent.location, WinningDestination)
         if winning_destinations:
             agent.performance += 100
@@ -197,13 +200,13 @@ class GridWorldEnvironment(XYEnvironment):
             GAME_WON = True
 
         # Check for penalty destination
-        penalty_destinations = self.list_things_at(agent.location, PenaltyDestination)
-        if penalty_destinations:
+        penalty_destination = self.list_things_at(agent.location, PenaltyDestination)
+        if penalty_destination:
             agent.performance -= 50
             verbose_message(f"😭 You have reached the penalty destination!             : Performance penalty:   50  Performance Total: {agent.performance:4}")
 
     def is_done(self):
-        """ The environment is done if the agent has won the game or if no agents are alive. """
+        """ The environment is done if the agent has won the game"""
         global GAME_WON
         return GAME_WON or super().is_done()
 
