@@ -40,7 +40,7 @@ def verbose_message(message):
         print(message)
 
 def generate_random_starting_positions(width, height):
-    # Generate random positions for obstacle, winning destination, penalty destination, and the agent.
+    # Generate random positions for obstacle, winning destination, penalty destinations, and the agent.
     occupied_positions = []
 
     obstacle_x = random.randint(0, width - 1)
@@ -54,17 +54,14 @@ def generate_random_starting_positions(width, height):
             occupied_positions.append((win_x, win_y))
             break
 
-    while True:
-        penalty_x = random.randint(0, width - 1)
-        penalty_y = random.randint(0, height - 1)
-        if (penalty_x, penalty_y) not in occupied_positions:
-            occupied_positions.append((penalty_x, penalty_y))
-            break
-        # for x in range(width -1):
-        #     for y in range(height -1):
-        #         if random.random() < penalty_prob:
-        #             if (neg_x, neg_y) not in occupied_positions:
-        #                 occupied_positions.append((neg_x, neg_y))
+    # Place penalty blocks randomly
+    penalty_positions = []
+    for x in range(width):
+        for y in range(height):
+            pos = (x, y)
+            if pos not in occupied_positions and random.random() < args.penalty_prob:
+                penalty_positions.append(pos)
+                occupied_positions.append(pos)
 
     while True:
         agent_x = random.randint(0, width - 1)
@@ -75,11 +72,11 @@ def generate_random_starting_positions(width, height):
 
     verbose_message(f"Obstacle location is   ({obstacle_x}, {obstacle_y})")
     verbose_message(f"Winning location is    ({win_x}, {win_y})")
-    verbose_message(f"Penalty location is    ({penalty_x}, {penalty_y})")
+    verbose_message(f"Penalty locations are  {penalty_positions}")
     verbose_message(f"Agent location is      ({agent_x}, {agent_y})")
-    verbose_message(f"Occupied positions are [{occupied_positions}]")
+    verbose_message(f"Occupied positions are {occupied_positions}")
 
-    return (obstacle_x, obstacle_y), (win_x, win_y), (penalty_x, penalty_y), (agent_x, agent_y), occupied_positions
+    return (obstacle_x, obstacle_y), (win_x, win_y), penalty_positions, (agent_x, agent_y), occupied_positions
 
 # Env
 class WinningDestination(Thing):
@@ -97,13 +94,16 @@ class GridWorldEnvironment(XYEnvironment):
         self.width = width
         self.height = height
         
-        # Generate random positions for obstacle, winning destination, penalty destination, and agent
-        obstacle_pos, winning_pos, penalty_pos, _, _ = generate_random_starting_positions(width, height)
+        # Generate random positions for obstacle, winning destination, penalty destinations, and agent
+        obstacle_pos, winning_pos, penalty_positions, _, _ = generate_random_starting_positions(width, height)
         
         # Add things to the environment
         self.add_thing(Obstacle(), obstacle_pos)
         self.add_thing(WinningDestination(), winning_pos)
-        self.add_thing(PenaltyDestination(), penalty_pos)
+        
+        # Add multiple penalty destinations
+        for penalty_pos in penalty_positions:
+            self.add_thing(PenaltyDestination(), penalty_pos)
 
     def percept(self, agent):
         # A list of available movements from the agent's current location and the associated cost
@@ -266,11 +266,11 @@ class TableDrivenAgent(Agent):
 
 class GoalBasedAgent(Agent):
     # GOAL is self.location == goal_location
-    def __init__(self, agent_pos, winning_pos, penalty_pos, obstacle_pos):
+    def __init__(self, agent_pos, winning_pos, penalty_positions, obstacle_pos):
         # Maintain some state info for the agent
         self.location = agent_pos
         self.goal_location = winning_pos
-        self.penalty_location = penalty_pos
+        self.penalty_positions = penalty_positions
         self.obstacle_location = obstacle_pos
         super().__init__(self.goalbased_action)
 
@@ -285,7 +285,7 @@ class GoalBasedAgent(Agent):
             width=args.width,
             height=args.height,
             obstacles=[self.obstacle_location],
-            penalty_location=self.penalty_location
+            penalty_location=self.penalty_positions[0] if self.penalty_positions else None
         )
         star_search_result = astar_search(problem)
 
@@ -331,6 +331,36 @@ def test_agent(AgentFactory, steps, envs):
 
     return agent_stats
 
+def extract_locations_from_env(env):
+    penalty_positions = []
+    winning_pos = obstacle_pos = None
+    occupied_positions = []
+    for thing in env.things:
+        loc = getattr(thing, 'location', None)
+        occupied_positions.append(loc)
+        if isinstance(thing, PenaltyDestination):
+            penalty_positions.append(loc)
+        elif isinstance(thing, WinningDestination):
+            winning_pos = loc
+        elif isinstance(thing, Obstacle):
+            obstacle_pos = loc
+    
+    # For backward compatibility, if there's only one penalty position, return it directly
+    # Otherwise, return the list of penalty positions
+    penalty_pos = penalty_positions[0] if penalty_positions else None
+    
+    return penalty_positions, winning_pos, obstacle_pos, occupied_positions
+
+def find_position_for_agent(env, occupied_positions):
+    while True:
+        x = random.randint(0, env.width - 1)
+        y = random.randint(0, env.height - 1)
+        pos = (x, y)
+        if pos not in occupied_positions:
+            break
+    return pos
+
+
 def building_your_world():
     """ This function is used to build the world for the agent to explore."""
     global GAME_WON
@@ -348,36 +378,12 @@ def building_your_world():
         agent = TableDrivenAgent()
         return agent
 
-    def extract_locations_from_env(env):
-        penalty_pos = winning_pos = obstacle_pos = None
-        occupied_positions = []
-        for thing in env.things:
-            loc = getattr(thing, 'location', None)
-            occupied_positions.append(loc)
-            if isinstance(thing, PenaltyDestination):
-                penalty_pos = loc
-            elif isinstance(thing, WinningDestination):
-                winning_pos = loc
-            elif isinstance(thing, Obstacle):
-                obstacle_pos = loc
-        
-        return penalty_pos, winning_pos, obstacle_pos, occupied_positions
-
-    def find_position_for_agent(env, occupied_positions):
-        while True:
-            x = random.randint(0, env.width - 1)
-            y = random.randint(0, env.height - 1)
-            pos = (x, y)
-            if pos not in occupied_positions:
-                break
-        return pos
-
     def goal_agent_factory():
         # Create a GridWorldEnvironment and extract positions from it
         env = GridWorldEnvironment(args.width, args.height)
-        penalty_pos, winning_pos, obstacle_pos, occupied_positions = extract_locations_from_env(env)
+        penalty_positions, winning_pos, obstacle_pos, occupied_positions = extract_locations_from_env(env)
         agent_pos = find_position_for_agent(env, occupied_positions)
-        agent = GoalBasedAgent(agent_pos, winning_pos, penalty_pos, obstacle_pos)
+        agent = GoalBasedAgent(agent_pos, winning_pos, penalty_positions, obstacle_pos)
         return agent
 
     # Define the environment factory
@@ -494,9 +500,10 @@ def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True)
     solution_totals = {'path_cost': 0, 'goal_tests': 0, 'states': 0, 'succs': 0, 'time_taken': 0.0}
     
     for i in range(runs):
-        # Generate random positions for obstacle, winning destination, penalty destination, and agent
-        obstacle_pos, winning_pos, penalty_pos, agent_pos, _ = generate_random_starting_positions(args.width, args.height)
-        
+        # Create a GridWorldEnvironment and extract positions from it
+        env = GridWorldEnvironment(args.width, args.height)
+        penalty_positions, winning_pos, obstacle_pos, occupied_positions = extract_locations_from_env(env)
+        agent_pos = find_position_for_agent(env, occupied_positions)
         # Create appropriate problem type based on whether or not we need a heuristic
         if use_heuristic:
             problem = GridSearchProblemWithHeuristic(
@@ -505,7 +512,7 @@ def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True)
                 width=args.width,
                 height=args.height,
                 obstacles=[obstacle_pos],
-                penalty_location=penalty_pos
+                penalty_location=penalty_positions[0] if penalty_positions else None
             )
         else:
             problem = GridSearchProblem(
@@ -514,7 +521,7 @@ def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True)
                 width=args.width,
                 height=args.height,
                 obstacles=[obstacle_pos],
-                penalty_location=penalty_pos
+                penalty_location=penalty_positions[0] if penalty_positions else None
             )
         
         run_stat = {}
@@ -664,6 +671,7 @@ if __name__ == "__main__":
     parser.add_argument('-r', '--runs', type=int, nargs='?', const=1, default=500, help='Number of times to run each Agent (agent only) (DEFAULT: 10)')
     parser.add_argument('-x', '--width', type=int, nargs='?', const=1, default=6, help='Width of the grid world (DEFAULT: 6)')
     parser.add_argument('-y', '--height', type=int, nargs='?', const=1, default=6, help='height of the grid world (DEFAULT: 6)')
+    parser.add_argument('-p', '--penalty-prob', type=float, default=0.1, help='Probability of placing a penalty block at a position (DEFAULT: 0.1)')
     args = parser.parse_args()
 
     print_args(args)
