@@ -363,17 +363,20 @@ def building_your_world():
         
         return penalty_pos, winning_pos, obstacle_pos, occupied_positions
 
+    def find_position_for_agent(env, occupied_positions):
+        while True:
+            x = random.randint(0, env.width - 1)
+            y = random.randint(0, env.height - 1)
+            pos = (x, y)
+            if pos not in occupied_positions:
+                break
+        return pos
+
     def goal_agent_factory():
         # Create a GridWorldEnvironment and extract positions from it
         env = GridWorldEnvironment(args.width, args.height)
         penalty_pos, winning_pos, obstacle_pos, occupied_positions = extract_locations_from_env(env)
-
-        while True:
-            agent_x = random.randint(0, args.width - 1)
-            agent_y = random.randint(0, args.height - 1)
-            agent_pos = (agent_x, agent_y)
-            if agent_pos not in occupied_positions:
-                break
+        agent_pos = find_position_for_agent(env, occupied_positions)
         agent = GoalBasedAgent(agent_pos, winning_pos, penalty_pos, obstacle_pos)
         return agent
 
