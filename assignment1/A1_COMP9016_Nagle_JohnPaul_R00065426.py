@@ -7,6 +7,7 @@ Class:        Knowledge Representation
 Assignment:   1
 
 """
+from datetime import datetime
 import sys
 import os
 import random
@@ -568,90 +569,105 @@ def run_search_experiment(algorithm_name, runs, search_type, use_heuristic=True)
             
             verbose_message(f" {algorithm_name} {run_stat}")
             solution_stats.append(run_stat)
-        
+
         # Clean up
         del problem, instrumented_problem
         if solution is not None:
             del solution
-    
-    return solution_stats, solution_totals
+
+    # Write the results of each run to a file, for further analysis
+    if args.csvfile:
+        headers = list(solution_stats[0].keys())
+        now = datetime.now()
+        timestamp = now.strftime("%Y%m%d%H%M%S%f")
+        file_name     = f"R00065426-{search_type}-{timestamp}.csv"
+        folder_name = f"R00065426"
+        full_path = os.path.join(folder_name, file_name)
+        os.makedirs(folder_name, exist_ok=True)
+        with open(full_path, "w") as f:    
+            f.write(",".join(headers) + "\n")
+            for row in solution_stats:        
+                values = [str(row[h]) for h in headers]        
+                f.write(",".join(values) + "\n")
+
+    return solution_totals
 
 def searching_your_world():
     # Uninformed searches
     # Breadth First Search
-    _, solution_bfs_totals = run_search_experiment("BFS", args.runs, "bfs", use_heuristic=False)
+    solution_bfs_totals = run_search_experiment("BFS", args.runs, "bfs", use_heuristic=False)
     # Depth First Search 
-    _, solution_dfs_totals = run_search_experiment("DFS", args.runs, "dfs", use_heuristic=False)
+    solution_dfs_totals = run_search_experiment("DFS", args.runs, "dfs", use_heuristic=False)
     # Uniform Cost Search
-    _, solution_ucs_totals = run_search_experiment("UCS", args.runs, "ucs", use_heuristic=False)
+    solution_ucs_totals = run_search_experiment("UCS", args.runs, "ucs", use_heuristic=False)
     # Depth Limited Search
-    _, solution_dls_totals = run_search_experiment("DLS", args.runs, "dls", use_heuristic=False)
+    solution_dls_totals = run_search_experiment("DLS", args.runs, "dls", use_heuristic=False)
 
     # Print results for uninformed searches
     print("")
-    print(" UNINFORMED SEARCH   | COST   | GOAL TESTS | STATES | ACTIONS | AVG TIME")
-    print("-------------------------------------------------------------------------")
+    print(" UNINFORMED SEARCH   | COST   | GOAL TESTS | STATES | SUCESSORS | AVG TIME")
+    print("---------------------------------------------------------------------------")
     print(f"Breadth First Search | "
         f"{solution_bfs_totals['path_cost'] / args.runs:^7.2f}|"
         f"{solution_bfs_totals['goal_tests'] / args.runs:^12.2f}|"
         f"{solution_bfs_totals['states'] / args.runs:^8.2f}|"
-        f"{solution_bfs_totals['succs'] / args.runs:^9.2f}|"
+        f"{solution_bfs_totals['succs'] / args.runs:^11.2f}|"
         f"{solution_bfs_totals['time_taken'] / args.runs:^11.6f}")
     print(f"Depth First Search   | "
         f"{solution_dfs_totals['path_cost'] / args.runs:^7.2f}|"
         f"{solution_dfs_totals['goal_tests'] / args.runs:^12.2f}|"
         f"{solution_dfs_totals['states'] / args.runs:^8.2f}|"
-        f"{solution_dfs_totals['succs'] / args.runs:^9.2f}|"
+        f"{solution_dfs_totals['succs'] / args.runs:^11.2f}|"
         f"{solution_dfs_totals['time_taken'] / args.runs:^11.6f}")
     print(f"Uniform Cost Search  | "
         f"{solution_ucs_totals['path_cost'] / args.runs:^7.2f}|"
         f"{solution_ucs_totals['goal_tests'] / args.runs:^12.2f}|"
         f"{solution_ucs_totals['states'] / args.runs:^8.2f}|"
-        f"{solution_ucs_totals['succs'] / args.runs:^9.2f}|"
+        f"{solution_ucs_totals['succs'] / args.runs:^11.2f}|"
         f"{solution_ucs_totals['time_taken'] / args.runs:^11.6f}")
     print(f"Depth Limited Search | "
           f"{solution_dls_totals['path_cost'] / args.runs:^7.2f}|"
           f"{solution_dls_totals['goal_tests'] / args.runs:^12.2f}|"
           f"{solution_dls_totals['states'] / args.runs:^8.2f}|"
-          f"{solution_dls_totals['succs'] / args.runs:^9.2f}|"
+          f"{solution_dls_totals['succs'] / args.runs:^11.2f}|"
           f"{solution_dls_totals['time_taken'] / args.runs:^11.6f}")
 
 
     # Informed searches
     # A* Search
-    _, solution_astar_totals = run_search_experiment("A*", args.runs, "astar", use_heuristic=True)
+    solution_astar_totals = run_search_experiment("A*", args.runs, "astar", use_heuristic=True)
 
     # Print results
     print("")
-    print( " INFORMED SEARCH     | COST   | GOAL TESTS | STATES | ACTIONS | AVG TIME")
-    print("-------------------------------------------------------------------------")
+    print( " INFORMED SEARCH     | COST   | GOAL TESTS | STATES | SUCESSORS | AVG TIME")
+    print("----------------------------------------------------------------------------")
     print(f"A* Search            | "
           f"{solution_astar_totals['path_cost'] / args.runs:^7.2f}|"
           f"{solution_astar_totals['goal_tests'] / args.runs:^12.2f}|"
           f"{solution_astar_totals['states'] / args.runs:^8.2f}|"
-          f"{solution_astar_totals['succs'] / args.runs:^9.2f}|"
+          f"{solution_astar_totals['succs'] / args.runs:^11.2f}|"
           f"{solution_astar_totals['time_taken'] / args.runs:^11.6f}")
 
     # Recursive Best First Search
     try:
-        _, solution_rbfs_totals = run_search_experiment("RBFS", 1, "rbfs", use_heuristic=True)
+        solution_rbfs_totals = run_search_experiment("RBFS", 10, "rbfs", use_heuristic=True)
         print(f"Recurs Best 1st Srch | "
             f"{solution_rbfs_totals['path_cost']:^7.2f}|"
             f"{solution_rbfs_totals['goal_tests']:^12}|"
             f"{solution_rbfs_totals['states']:^8}|"
-            f"{solution_rbfs_totals['succs']:^9}|"
+            f"{solution_rbfs_totals['succs']:^11.2f}|"
             f"{solution_rbfs_totals['time_taken']:^11.6f}")
     except Exception as e:
         print(f"Recurs Best 1st Srch | {e}!")
 
     # Greedy Best First Search
-    _, solution_greedy_totals = run_search_experiment("Greedy", 1, "greedy", use_heuristic=True)
+    solution_greedy_totals = run_search_experiment("Greedy", 1, "greedy", use_heuristic=True)
     if solution_greedy_totals:
         print(f"Greedy Best 1st Srch | "
             f"{solution_greedy_totals['path_cost']:^7.2f}|"
             f"{solution_greedy_totals['goal_tests']:^12}|"
             f"{solution_greedy_totals['states']:^8}|"
-            f"{solution_greedy_totals['succs']:^9}|"
+            f"{solution_greedy_totals['succs']:^11.2f}|"
             f"{solution_greedy_totals['time_taken']:^11.6f}")
     else:
         print("=> Greedy:  No solution found")
@@ -671,6 +687,7 @@ if __name__ == "__main__":
     parser.add_argument('-x', '--width', type=int, nargs='?', const=1, default=6, help='Width of the grid world (DEFAULT: 6)')
     parser.add_argument('-y', '--height', type=int, nargs='?', const=1, default=6, help='height of the grid world (DEFAULT: 6)')
     parser.add_argument('-p', '--penalty-prob', type=float, default=0.1, help='Probability of placing a penalty block at a position (DEFAULT: 0.1)')
+    parser.add_argument('-c', '--csvfile', action='store_true', help='Store results from Searchs in csv files for analysis')
     args = parser.parse_args()
 
     print_args(args)
