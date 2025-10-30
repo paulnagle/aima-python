@@ -20,7 +20,7 @@ if parent_dir not in sys.path:
 
 # Now you can import a module from the parent directory
 
-from logic import Expr, FolKB, fol_fc_ask
+from logic import Expr, FolKB, fol_fc_ask, fol_bc_ask
 from utils import expr
 
 def print_clauses(kb, message="Clauses in the Knowledge Base:", bool_print=True):
@@ -127,11 +127,7 @@ assignment2_kb.tell(expr('Takes(Eve, COMP9016)'))
 
 
 # 1.1.3 INFERENCE AND ANALYSIS
-print("1.1.3 INFERENCE AND ANALYSIS")
-# print_clauses(assignment2_kb, "PRE fol_fc_ask" )
-# answer = fol_fc_ask(assignment2_kb, expr('Student(Bob)'))
-#
-# print_clauses(assignment2_kb, "POST fol_fc_ask" )
+print("1.1.3 INFERENCE AND ANALYSIS => 1 Forward Chaining")
 
 def run_forward_chaining(kb):
     print("\n=== Forward Chaining Results ===")
@@ -156,12 +152,11 @@ def run_forward_chaining(kb):
     print("\nClassmate logical inferences:")
     for s1 in students:
         for s2 in students:
-            if s1 != s2:  # Don't check if someone is their own classmate
-                query = expr(f'Classmate({s1}, {s2})')
-                results = list(fol_fc_ask(kb, query))
-                if results:
-                    print(f"- {query}")
-                    logical_inferences.append(query)
+            query = expr(f'Classmate({s1}, {s2})')
+            results = list(fol_fc_ask(kb, query))
+            if results:
+                print(f"- {query}")
+                logical_inferences.append(query)
     
     # Check Prereq logical inferences
     print("\nPrereq logical inferences:")
@@ -208,8 +203,34 @@ def run_forward_chaining(kb):
     print(f"\nTotal logical inferences: {len(logical_inferences)}")
     return logical_inferences
 
-print_clauses(assignment2_kb, "BEFORE INFERENECE:")
+
+
+print_clauses(assignment2_kb, "BEFORE INFERENCE:")
 # Run the forward chaining
 logical_inferences = run_forward_chaining(assignment2_kb)
 
-print_clauses(assignment2_kb, "AFTER INFERENECE:")
+print_clauses(assignment2_kb, "AFTER INFERENCE:")
+
+print("1.1.3 INFERENCE AND ANALYSIS => 2 Backward Chaining")
+# Backward Chaining (BC): Demonstrate reasoning for the following queries:
+# • Eligible(Alice, COMP9061)
+# • Eligible(Bob, COMP9061)
+# • TaughtBy(Eve, l)
+# • Classmate(Alice, Eve) (before and after adding Takes(Alice, COMP9016))
+
+query = assignment2_kb.ask(expr('Eligible(Alice, COMP9061)'))
+print(f"Is Alice Eligible for COMP9061? {query}")
+
+query = assignment2_kb.ask(expr('Eligible(Bob, COMP9061)'))
+print(f"Is Bob Eligible for COMP9061? {query}")
+
+query = assignment2_kb.ask(expr('TaughtBy(Eve, l)'))
+print(f"Is Eve TaughtBy l? {query}")
+
+query = assignment2_kb.ask(expr('Classmate(Alice, Eve)'))
+print(f"Is Alice a classmate of Eve (before adding Takes(Alice, COMP9016))? {query}")
+
+assignment2_kb.tell(expr('Classmate(Alice, Eve)'))
+
+query = assignment2_kb.ask(expr('Classmate(Alice, Eve)'))
+print(f"Is Alice a classmate of Eve (After adding Takes(Alice, COMP9016))? {query}")
