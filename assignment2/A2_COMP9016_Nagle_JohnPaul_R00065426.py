@@ -83,6 +83,7 @@ def Q1_1():
     assignment2_kb.tell(expr('Module(COMP9062)'))
     assignment2_kb.tell(expr('Module(COMP9061)'))
     assignment2_kb.tell(expr('Module(COMP9058)'))
+
     # Students
     print("- Students ✔️")
     assignment2_kb.tell(expr('Student(Alice)'))
@@ -93,23 +94,23 @@ def Q1_1():
             if student_1 != student_2:
                 assignment2_kb.tell(expr(f'NotEqual({student_1}, {student_2})'))
 
-    assignment2_kb.tell(expr('NotEqual(Alice, Bob)'))
-    assignment2_kb.tell(expr('NotEqual(Alice, Eve)'))
-    assignment2_kb.tell(expr('NotEqual(Bob, Eve)'))
     # Lecturers
     print("- Lecturers ✔️")
     assignment2_kb.tell(expr('Lecturer(DrDan)'))
     assignment2_kb.tell(expr('Lecturer(DrSophie)'))
     assignment2_kb.tell(expr('Lecturer(DrLisa)'))
+
     # Prerequisites
     print("- Prerequisites ✔️")
     assignment2_kb.tell(expr('Prereq(COMP9016, COMP9062)'))
     assignment2_kb.tell(expr('Prereq(COMP9062, COMP9061)'))
+
     # Teaching
     print("- Teaches ✔️")
     assignment2_kb.tell(expr('Teaches(DrDan, COMP9016)'))
     assignment2_kb.tell(expr('Teaches(DrSophie, COMP9062)'))
     assignment2_kb.tell(expr('Teaches(DrLisa, COMP9061)'))
+
     # Student Record
     print("- Student records ✔️")
     assignment2_kb.tell(expr('Passed(Alice, COMP9016)'))
@@ -141,7 +142,7 @@ def Q1_1():
 
         students = ["Alice", "Bob", "Eve"]
         lecturers = ["DrDan", "DrSophie", "DrLisa"]
-        modules = ["COMP9016", "COMP9058", "COMP9061", "COMP9062", ]
+        modules = ["COMP9016", "COMP9058", "COMP9061", "COMP9062"]
 
         logical_inferences = []
 
