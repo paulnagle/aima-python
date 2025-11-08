@@ -22,6 +22,7 @@ if parent_dir not in sys.path:
 
 from logic import Expr, FolKB, fol_fc_ask, fol_bc_ask
 from utils import expr
+from probability import BayesNet, enumeration_ask, elimination_ask, rejection_sampling, likelihood_weighting
 
 # Copied from module labs
 def print_clauses(kb, message="Clauses in the Knowledge Base:", bool_print=True):
@@ -32,6 +33,9 @@ def print_clauses(kb, message="Clauses in the Knowledge Base:", bool_print=True)
     print("Total Clauses: ", len(kb.clauses))
 
 def Q1_1():
+    print("*" * 80)
+    print("* Q 1.1")
+    print("*" * 80)
     # 1.1.1 Define the Knowledge Base
     print("1.1.1 Define the Knowledge Base" )
     # Create the First Order Logic Knowledge Base
@@ -243,14 +247,66 @@ def Q1_1():
 
 
 def Q1_2():
-    print("Q1_2")
-    pass
+    print("*" * 80)
+    print("* Q 1.2")
+    print("*" * 80)
+
+    # Create the Bayesnet based on the values from the Conditional Probability Tables in the doc
+    print("- Creating Bayesnet ✔️")
+    ai_market = BayesNet([
+        ('HypeLevel', '', 0.6),
+        ('ComputeCosts', '', 0.7),
+        ('RegulatoryPressure', '', 0.8),
+        ('VCInvestment', 'HypeLevel', {True: 0.8, False: 0.3 }),
+        ('EnterpriseAdoption', 'VCInvestment ComputeCosts RegulatoryPressure', {
+            (True, False, False): 0.9,
+            (True, True, False): 0.8,
+            (False, False, False): 0.7,
+            (False, True, False): 0.2,
+            (True, False, True): 0.6,
+            (True, True, True): 0.5,
+            (False, False, True): 0.4,
+            (False, True, True): 0.3
+        }),
+        ('LabourMarketImpact', 'HypeLevel RegulatoryPressure', {
+            (True, True): 0.6,
+            (True, False): 0.9,
+            (False, True): 0.2,
+            (False, False): 0.5
+        })
+    ])
+
+    print("- Querying the Network for probability of EnterpriseAdoption ✔️")
+    result = enumeration_ask('EnterpriseAdoption', {}, ai_market)
+    print(f"  P(EnterpriseAdoption=High) = {result[True]:.4f}")
+    print(f"  P(EnterpriseAdoption=Low) = {result[False]:.4f}")
+    
+    print("- Querying the Network for probability of EnterpriseAdoption given high HypeLevel ✔️")
+    result = enumeration_ask('EnterpriseAdoption', {'HypeLevel': True}, ai_market)
+    print(f"  P(EnterpriseAdoption=High | HypeLevel=High) = {result[True]:.4f}")
+    print(f"  P(EnterpriseAdoption=Low | HypeLevel=High) = {result[False]:.4f}")
+
+    print("- Querying the Network for probability of EnterpriseAdoption given low ComputeCosts ✔️")
+    result = enumeration_ask('EnterpriseAdoption', {'ComputeCosts': False}, ai_market)
+    print(f"  P(EnterpriseAdoption=High | ComputeCosts=Low) = {result[True]:.4f}")
+    print(f"  P(EnterpriseAdoption=Low | ComputeCosts=Low) = {result[False]:.4f}")
+
+    print("- Conditional Independence ✔️")
+    print("  - When VCInvestment is observed, HypeLevel becomes conditionally independent of EnterpriseAdoption")
+    result_with_hype = enumeration_ask('EnterpriseAdoption',{'HypeLevel': True, 'VCInvestment': True}, ai_market)
+    result_with_low_hype = enumeration_ask('EnterpriseAdoption',{'HypeLevel': False, 'VCInvestment': True}, ai_market)
+    result_with_no_hype = enumeration_ask('EnterpriseAdoption',{'VCInvestment': True},  ai_market)
+    print(f"    P(EA=High | HypeLevel=High, VCI=High) = {result_with_hype[True]:.4f}")
+    print(f"    P(EA=High | HypeLevel=Low, VCI=High) = {result_with_low_hype[True]:.4f}")
+    print(f"    P(EA=High | VCI=High) = {result_with_no_hype[True]:.4f}")
+    print(f"    --> Results are equal, showing conditional independence")
+
 
 def Q1_3():
-    print("Q1_2")
+    print("Q1_3")
     pass
 
 if __name__ == "__main__":
-    Q1_1()
+    # Q1_1()
     Q1_2()
     Q1_3()
