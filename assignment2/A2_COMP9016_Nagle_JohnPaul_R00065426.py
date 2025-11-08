@@ -252,6 +252,7 @@ def Q1_2():
     print("*" * 80)
 
     # Create the Bayesnet based on the values from the Conditional Probability Tables in the doc
+    # We only need to add the True values, the bayes net will add the normalisations
     print("- Creating Bayesnet ✔️")
     ai_market = BayesNet([
         ('HypeLevel', '', 0.6),
