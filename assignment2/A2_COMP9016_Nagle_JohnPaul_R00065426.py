@@ -538,9 +538,9 @@ def Q1_3():
         for line in file:
             values = line.strip().split(',')  # Strip whitespace and split by comma
             row_dict = {}  # Create a dictionary for this row
-            for i in range(0, len(abalone_column_names)):
+            for i in range(0, len(car_column_names)):
                 if i < len(values):
-                    row_dict[abalone_column_names[i]] = values[i]
+                    row_dict[car_column_names[i]] = values[i]
             car_data.append(row_dict)
 
     # Extract a relevant subset
@@ -548,9 +548,33 @@ def Q1_3():
     random.seed(65426)
     car_subset = random.sample(car_data, min(SUBSET_SIZE, len(car_data)))
 
+    # Calculate prior probabilities for each attribute value
+    prior_probs = {}
+
+    for col_index, col_name in enumerate(car_column_names[:-1]):  # exclude target class
+        counts = {}
+        for row in car_subset:
+            value = row[col_name]  # Use column name instead of index
+            if value not in counts:
+                counts[value] = 0
+            counts[value] += 1
+
+        # Compute probabilities
+        prior_probs[col_name] = {}
+        for val, count in counts.items():
+            prior_probs[col_name][val] = round(count / SUBSET_SIZE, 4)
+
+    # Display prior probabilities
+    print("Prior Probabilities for Each Attribute Value:\n")
+    for attribute, probs in prior_probs.items():
+        print(f"{attribute}:")
+        for val, prob in probs.items():
+            print(f"  {val}: {prob}")
+        print()
+
     # Estimate the probability of the evidence within the dataset using NumPy
     print("\n" + "="*60)
-    print("PROBABILITY OF EVIDENCE ESTIMATION (Using NumPy)")
+    print("PROBABILITY OF EVIDENCE ESTIMATION")
     print("="*60)
 
 
