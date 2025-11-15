@@ -11,6 +11,7 @@ from collections import Counter
 import random
 import sys
 import os
+import numpy as np
 
 
 # Get the parent directory of the current directory
@@ -316,7 +317,10 @@ def Q1_3():
     # • Calculate the Prior probabilities for the classes in each dataset.
     # • Estimate the probability of the evidence within the dataset.
     # • Determine the likelihood of the evidence (the numerator of Bayes’ formula).
-    
+
+    print("-" * 80)
+    print("- Abalone DataSet")
+    print("-" * 80)
     # Read abalone.csv file
     # Column names based on abalone.names file:
     # Sex, Length, Diameter, Height, Whole weight, Shucked weight, Viscera weight, Shell weight, Rings
@@ -338,7 +342,7 @@ def Q1_3():
 
     # Extract a relevant subset
     SUBSET_SIZE = 400
-    random.seed(42)
+    random.seed(65426)
     abalone_subset = random.sample(abalone_data, min(SUBSET_SIZE, len(abalone_data)))
 
 
@@ -357,7 +361,7 @@ def Q1_3():
     print(f"  P(I) = {prior_prob_sex_indetermined:.4f}")
     print("\n")
 
-    # For the categories with continuous variables, I choose the following bins
+    # For the categories with continuous variables, I chose the following bins
     # Length (Small < 0.3, Medium < 0.5, Large < 0.7, Very Large)
     # Diameter (Small < 0.25, Medium < 0.4, Large < 0.55, Very Large)
     # Height (Small < 0.08, Medium < 0.12, Large < 0.16, Very Large)
@@ -515,14 +519,44 @@ def Q1_3():
     for category, prob in rings_priors.items():
         print(f"  P({category}) = {prob:.4f}")
 
+    print("-" * 80)
+    print("- Car DataSet")
+    print("-" * 80)
+    # Read car.data file
+    # Column names based on car.c54-names file:
+    # buying:   vhigh, high, med, low.
+    # maint:    vhigh, high, med, low.
+    # doors:    2, 3, 4, 5more.
+    # persons:  2, 4, more.
+    # lug_boot: small, med, big.
+    # safety:   low, med, high.
+    car_column_names = ['buying', 'maint', 'doors', 'persons', 'lug_boot', 'safety', 'acceptability']
+    car_data = []
 
-    # Estimate the probability of the evidence within the dataset.
+    # Open and read the CSV file
+    with open('car.data', 'r') as file:
+        for line in file:
+            values = line.strip().split(',')  # Strip whitespace and split by comma
+            row_dict = {}  # Create a dictionary for this row
+            for i in range(0, len(abalone_column_names)):
+                if i < len(values):
+                    row_dict[abalone_column_names[i]] = values[i]
+            car_data.append(row_dict)
+
+    # Extract a relevant subset
+    SUBSET_SIZE = 200
+    random.seed(65426)
+    car_subset = random.sample(car_data, min(SUBSET_SIZE, len(car_data)))
+
+    # Estimate the probability of the evidence within the dataset using NumPy
+    print("\n" + "="*60)
+    print("PROBABILITY OF EVIDENCE ESTIMATION (Using NumPy)")
+    print("="*60)
 
 
-    # Determine the likelihood of the evidence (the numerator of Bayes’ formula).
 
-    
 
+    # Determine the likelihood of the evidence (the numerator of Bayes' formula).
 
     pass
 
