@@ -7,6 +7,8 @@ Class:        Knowledge Representation
 Assignment:   2
 
 """
+from collections import Counter
+import random
 import sys
 import os
 
@@ -22,7 +24,7 @@ if parent_dir not in sys.path:
 
 from logic import Expr, FolKB, fol_fc_ask, fol_bc_ask
 from utils import expr
-from probability import BayesNet, enumeration_ask, elimination_ask, rejection_sampling, likelihood_weighting
+from probability import BayesNet, enumeration_ask, elimination_ask, rejection_sampling, likelihood_weighting, JointProbDist, ProbDist
 
 # Copied from module labs
 def print_clauses(kb, message="Clauses in the Knowledge Base:", bool_print=True):
@@ -304,10 +306,227 @@ def Q1_2():
 
 
 def Q1_3():
-    print("Q1_3")
+    print("*" * 80)
+    print("* Q 1.3")
+    print("*" * 80)
+    # 1.3.1
+    # Select two appropriate datasets with a manageable number of features and classes from the
+    # UCI Machine Learning Repository: https://archive.ics.uci.edu/ml/index.php.
+    # Extract a relevant subset from each dataset and perform the following analyses:
+    # • Calculate the Prior probabilities for the classes in each dataset.
+    # • Estimate the probability of the evidence within the dataset.
+    # • Determine the likelihood of the evidence (the numerator of Bayes’ formula).
+    
+    # Read abalone.csv file
+    # Column names based on abalone.names file:
+    # Sex, Length, Diameter, Height, Whole weight, Shucked weight, Viscera weight, Shell weight, Rings
+    abalone_column_names = ['Sex', 'Length', 'Diameter', 'Height', 'Whole_weight',
+                            'Shucked_weight', 'Viscera_weight', 'Shell_weight', 'Rings']
+    abalone_data = []
+    
+    # Open and read the CSV file
+    with open('abalone.csv', 'r') as file:
+        for line in file:
+            values = line.strip().split(',')                            # Strip whitespace and split by comma
+            row_dict = {}                                               # Create a dictionary for this row
+            row_dict[abalone_column_names[0]] = values[0]               # The only non-numneric column is [0] Sex
+            # Convert numeric values to float
+            for i in range(1, len(abalone_column_names)):
+                if i < len(values):
+                    row_dict[abalone_column_names[i]] = float(values[i])
+            abalone_data.append(row_dict)
+
+    # Extract a relevant subset
+    SUBSET_SIZE = 400
+    random.seed(42)
+    abalone_subset = random.sample(abalone_data, min(SUBSET_SIZE, len(abalone_data)))
+
+
+    # Calculate Prior probabilities using the formula:
+    #         Number of instances of C
+    #  P(C) = ------------------------
+    #         Tot. no. of instances in the dataset
+
+    # - Sex
+    prior_prob_sex_male =  sum(1 for row in abalone_subset if row['Sex'] == 'M')/SUBSET_SIZE
+    prior_prob_sex_female = sum(1 for row in abalone_subset if row['Sex'] == 'F')/SUBSET_SIZE
+    prior_prob_sex_indetermined = sum(1 for row in abalone_subset if row['Sex'] == 'I')/SUBSET_SIZE
+    print("Prior probabilities for Sex category:")
+    print(f"  P(M) = {prior_prob_sex_male:.4f}")  
+    print(f"  P(F) = {prior_prob_sex_female:.4f}")  
+    print(f"  P(I) = {prior_prob_sex_indetermined:.4f}")
+    print("\n")
+
+    # For the categories with continuous variables, I choose the following bins
+    # Length (Small < 0.3, Medium < 0.5, Large < 0.7, Very Large)
+    # Diameter (Small < 0.25, Medium < 0.4, Large < 0.55, Very Large)
+    # Height (Small < 0.08, Medium < 0.12, Large < 0.16, Very Large)
+    # Whole_weight (Light < 0.4, Medium < 0.8, Heavy < 1.2, Very Heavy)
+    # Shucked_weight Light < 0.2, Medium < 0.4, Heavy < 0.6, Very Heavy)
+    # Viscera_weight (Light < 0.1, Medium < 0.2, Heavy < 0.3, Very Heavy)
+    # Shell_weight (Light < 0.15, Medium < 0.25, Heavy < 0.35, Very Heavy)
+    # Rings - 4 age categories (Young < 8, Adult < 11, Mature < 15, Old)
+
+    # Helper function to calculate prior probabilities for continuous variables
+    def calculate_continuous_priors(data, column_name, bin_function, category_suffix='_Category'):
+
+        # Add category column
+        category_col = column_name + category_suffix
+        for row in data:
+            row[category_col] = bin_function(row[column_name])
+        
+        # Count occurrences
+        counts = {}
+        for row in data:
+            category = row[category_col]
+            counts[category] = counts.get(category, 0) + 1
+        
+        # Calculate probabilities
+        priors = {category: count / SUBSET_SIZE for category, count in counts.items()}
+        
+        return priors
+
+    # - Length
+    # For Length, we will use the following bins:
+    def length_bins(length):
+        if length < 0.3:
+            return 'Small'
+        elif length < 0.5:
+            return 'Medium'
+        elif length < 0.7:
+            return 'Large'
+        else:
+            return 'Very Large'
+
+    length_priors = calculate_continuous_priors(abalone_subset, 'Length', length_bins)
+    print("\nPrior probabilities for Length categories:")
+    for category, prob in length_priors.items():
+        print(f"  P({category}) = {prob:.4f}")
+
+    # - Diameter
+    def diameter_bins(diameter):
+        if diameter < 0.25:
+            return 'Small'
+        elif diameter < 0.4:
+            return 'Medium'
+        elif diameter < 0.55:
+            return 'Large'
+        else:
+            return 'Very Large'
+    
+    diameter_priors = calculate_continuous_priors(abalone_subset, 'Diameter', diameter_bins)
+    print("\nPrior probabilities for Diameter categories:")
+    for category, prob in diameter_priors.items():
+        print(f"  P({category}) = {prob:.4f}")
+
+    # - Height
+    def height_bins(height):
+        if height < 0.08:
+            return 'Small'
+        elif height < 0.12:
+            return 'Medium'
+        elif height < 0.16:
+            return 'Large'
+        else:
+            return 'Very Large'
+    
+    height_priors = calculate_continuous_priors(abalone_subset, 'Height', height_bins)
+    print("\nPrior probabilities for Height categories:")
+    for category, prob in height_priors.items():
+        print(f"  P({category}) = {prob:.4f}")
+
+    # - Whole_weight
+    def whole_weight_bins(weight):
+        if weight < 0.4:
+            return 'Light'
+        elif weight < 0.8:
+            return 'Medium'
+        elif weight < 1.2:
+            return 'Heavy'
+        else:
+            return 'Very Heavy'
+    
+    whole_weight_priors = calculate_continuous_priors(abalone_subset, 'Whole_weight', whole_weight_bins)
+    print("\nPrior probabilities for Whole_weight categories:")
+    for category, prob in whole_weight_priors.items():
+        print(f"  P({category}) = {prob:.4f}")
+
+    # - Shucked_weight
+    def shucked_weight_bins(weight):
+        if weight < 0.2:
+            return 'Light'
+        elif weight < 0.4:
+            return 'Medium'
+        elif weight < 0.6:
+            return 'Heavy'
+        else:
+            return 'Very Heavy'
+    
+    shucked_weight_priors = calculate_continuous_priors(abalone_subset, 'Shucked_weight', shucked_weight_bins)
+    print("\nPrior probabilities for Shucked_weight categories:")
+    for category, prob in shucked_weight_priors.items():
+        print(f"  P({category}) = {prob:.4f}")
+
+    # - Viscera_weight
+    def viscera_weight_bins(weight):
+        if weight < 0.1:
+            return 'Light'
+        elif weight < 0.2:
+            return 'Medium'
+        elif weight < 0.3:
+            return 'Heavy'
+        else:
+            return 'Very Heavy'
+    
+    viscera_weight_priors = calculate_continuous_priors(abalone_subset, 'Viscera_weight', viscera_weight_bins)
+    print("\nPrior probabilities for Viscera_weight categories:")
+    for category, prob in viscera_weight_priors.items():
+        print(f"  P({category}) = {prob:.4f}")
+
+    # - Shell_weight
+    def shell_weight_bins(weight):
+        if weight < 0.15:
+            return 'Light'
+        elif weight < 0.25:
+            return 'Medium'
+        elif weight < 0.35:
+            return 'Heavy'
+        else:
+            return 'Very Heavy'
+    
+    shell_weight_priors = calculate_continuous_priors(abalone_subset, 'Shell_weight', shell_weight_bins)
+    print("\nPrior probabilities for Shell_weight categories:")
+    for category, prob in shell_weight_priors.items():
+        print(f"  P({category}) = {prob:.4f}")
+
+    # - Rings (this is already discrete/integer, but we can group into age categories)
+    def rings_bins(rings):
+        if rings < 8:
+            return 'Young'
+        elif rings < 11:
+            return 'Adult'
+        elif rings < 15:
+            return 'Mature'
+        else:
+            return 'Old'
+    
+    rings_priors = calculate_continuous_priors(abalone_subset, 'Rings', rings_bins)
+    print("\nPrior probabilities for Rings (Age) categories:")
+    for category, prob in rings_priors.items():
+        print(f"  P({category}) = {prob:.4f}")
+
+
+    # Estimate the probability of the evidence within the dataset.
+
+
+    # Determine the likelihood of the evidence (the numerator of Bayes’ formula).
+
+    
+
+
     pass
 
 if __name__ == "__main__":
     # Q1_1()
-    Q1_2()
+    # Q1_2()
     Q1_3()
